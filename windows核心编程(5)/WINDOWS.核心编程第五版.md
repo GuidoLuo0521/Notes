@@ -1220,7 +1220,7 @@ VOID ReleaseSRWLockShared(PSRWLOCK SRWLock);
 
 **与关键段相比缺乏的特性**
 
-* 不存在 TryEnter()之类的函数。如果锁已经被占用，那么AcquireSRWLock***() 会被阻塞
+* 不存在 TryEnter()之类的函数。如果锁m_MySQL_Critical_Param已经被占用，那么AcquireSRWLock***() 会被阻塞
 * 不能递归获取 SRWLOCK，也就是一个线程不能多次写入资源而多次锁定资源，然后再多次调用ReleaseSRWLock***()来释放。
 
 如果接受这些限制，可以用SRWLock替换 关键段获取性能提升。
