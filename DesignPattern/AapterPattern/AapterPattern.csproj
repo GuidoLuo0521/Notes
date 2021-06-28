@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;ClassAdpterDebug;ObjectAdperDebug;CompositeSafe</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ClassAdpterDebug|AnyCPU'">
+    <DefineConstants>TRACE;_ClassAdpterDebug_</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ObjectAdperDebug|AnyCPU'">
+    <DefineConstants>TRACE;_ObjectAdpterDebug_</DefineConstants>
+  </PropertyGroup>
+
+</Project>
