@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.11.1, 2021-06-24T17:53:04. -->
+<!-- Written by QtCreator 4.11.1, 2021-07-04T16:58:43. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{d7ef34e8-46bb-494e-abff-74e5f4311e79}</value>
+  <value type="QByteArray">{4855be5a-f9f4-4bb3-a114-81a1b0e2a20e}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -29,7 +29,7 @@
     </valuemap>
    </valuemap>
    <value type="int" key="EditorConfiguration.CodeStyle.Count">2</value>
-   <value type="QByteArray" key="EditorConfiguration.Codec">System</value>
+   <value type="QByteArray" key="EditorConfiguration.Codec">UTF-8</value>
    <value type="bool" key="EditorConfiguration.ConstrainTooltips">false</value>
    <value type="int" key="EditorConfiguration.IndentSize">4</value>
    <value type="bool" key="EditorConfiguration.KeyboardTooltips">false</value>
@@ -45,7 +45,7 @@
    <value type="int" key="EditorConfiguration.TabKeyBehavior">0</value>
    <value type="int" key="EditorConfiguration.TabSize">8</value>
    <value type="bool" key="EditorConfiguration.UseGlobal">true</value>
-   <value type="int" key="EditorConfiguration.Utf8BomBehavior">0</value>
+   <value type="int" key="EditorConfiguration.Utf8BomBehavior">1</value>
    <value type="bool" key="EditorConfiguration.addFinalNewLine">true</value>
    <value type="bool" key="EditorConfiguration.cleanIndentation">true</value>
    <value type="bool" key="EditorConfiguration.cleanWhitespace">true</value>
@@ -69,16 +69,16 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">qt.qt5.5142.win64_mingw73_kit</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">4</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">5</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">QtProjectManager.QMakeBuildStep</value>
       <value type="bool" key="QtProjectManager.QMakeBuildStep.LinkQmlDebuggingLibrary">true</value>
       <value type="QString" key="QtProjectManager.QMakeBuildStep.QMakeArguments"></value>
-      <value type="bool" key="QtProjectManager.QMakeBuildStep.QMakeForced">true</value>
+      <value type="bool" key="QtProjectManager.QMakeBuildStep.QMakeForced">false</value>
       <value type="bool" key="QtProjectManager.QMakeBuildStep.SeparateDebugInfo">false</value>
       <value type="bool" key="QtProjectManager.QMakeBuildStep.UseQtQuickCompiler">false</value>
      </valuemap>
@@ -119,7 +119,7 @@
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -167,7 +167,7 @@
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">0</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.2">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Profile</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -287,8 +287,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/git/Projects/Qt/LearnOpenCV/Chapter02-IntroductionToOpenCV/Chapter02-IntroductionToOpenCV.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">F:/git/Projects/Qt/LearnOpenCV/Chapter02-IntroductionToOpenCV/Chapter02-IntroductionToOpenCV.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter02-IntroductionToOpenCV/Chapter02-IntroductionToOpenCV.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter02-IntroductionToOpenCV/Chapter02-IntroductionToOpenCV.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -299,7 +299,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter02-IntroductionToOpenCV</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter02-IntroductionToOpenCV</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>
@@ -361,8 +361,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/git/Projects/Qt/LearnOpenCV/Chapter04-ImagesAndLargeArrayTypes/Chapter04-ImagesAndLargeArrayTypes.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">F:/git/Projects/Qt/LearnOpenCV/Chapter04-ImagesAndLargeArrayTypes/Chapter04-ImagesAndLargeArrayTypes.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter04-ImagesAndLargeArrayTypes/Chapter04-ImagesAndLargeArrayTypes.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter04-ImagesAndLargeArrayTypes/Chapter04-ImagesAndLargeArrayTypes.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -373,7 +373,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter04-ImagesAndLargeArrayTypes</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter04-ImagesAndLargeArrayTypes</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.2">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>
@@ -435,8 +435,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/git/Projects/Qt/LearnOpenCV/Chapter08-ImageVideoAndDataFiles/Chapter08-ImageVideoAndDataFiles.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">F:/git/Projects/Qt/LearnOpenCV/Chapter08-ImageVideoAndDataFiles/Chapter08-ImageVideoAndDataFiles.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter08-ImageVideoAndDataFiles/Chapter08-ImageVideoAndDataFiles.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter08-ImageVideoAndDataFiles/Chapter08-ImageVideoAndDataFiles.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -447,7 +447,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter08-ImageVideoAndDataFiles</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter08-ImageVideoAndDataFiles</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.3">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>
@@ -509,8 +509,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/git/Projects/Qt/LearnOpenCV/Chapter10-FiltersAndConvolution/Chapter10-FiltersAndConvolution.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">F:/git/Projects/Qt/LearnOpenCV/Chapter10-FiltersAndConvolution/Chapter10-FiltersAndConvolution.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter10-FiltersAndConvolution/Chapter10-FiltersAndConvolution.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter10-FiltersAndConvolution/Chapter10-FiltersAndConvolution.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -521,7 +521,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter10-FiltersAndConvolution</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter10-FiltersAndConvolution</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.4">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>
@@ -583,8 +583,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/git/Projects/Qt/LearnOpenCV/Chapter11-GeneralImageTransforms/Chapter11-GeneralImageTransforms.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">F:/git/Projects/Qt/LearnOpenCV/Chapter11-GeneralImageTransforms/Chapter11-GeneralImageTransforms.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter11-GeneralImageTransforms/Chapter11-GeneralImageTransforms.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter11-GeneralImageTransforms/Chapter11-GeneralImageTransforms.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -595,9 +595,83 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">F:/git/Projects/Qt/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter11-GeneralImageTransforms</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter11-GeneralImageTransforms</value>
    </valuemap>
-   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">5</value>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.5">
+    <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>
+    <valuelist type="QVariantList" key="Analyzer.Perf.Events">
+     <value type="QString">cpu-cycles</value>
+    </valuelist>
+    <valuelist type="QVariantList" key="Analyzer.Perf.ExtraArguments"/>
+    <value type="int" key="Analyzer.Perf.Frequency">250</value>
+    <valuelist type="QVariantList" key="Analyzer.Perf.RecordArguments">
+     <value type="QString">-e</value>
+     <value type="QString">cpu-cycles</value>
+     <value type="QString">--call-graph</value>
+     <value type="QString">dwarf,4096</value>
+     <value type="QString">-F</value>
+     <value type="QString">250</value>
+    </valuelist>
+    <value type="QString" key="Analyzer.Perf.SampleMode">-F</value>
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Perf.StackSize">4096</value>
+    <value type="bool" key="Analyzer.QmlProfiler.AggregateTraces">false</value>
+    <value type="bool" key="Analyzer.QmlProfiler.FlushEnabled">false</value>
+    <value type="uint" key="Analyzer.QmlProfiler.FlushInterval">1000</value>
+    <value type="QString" key="Analyzer.QmlProfiler.LastTraceFile"></value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="Analyzer.Valgrind.AddedSuppressionFiles"/>
+    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectBusEvents">false</value>
+    <value type="bool" key="Analyzer.Valgrind.Callgrind.CollectSystime">false</value>
+    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableBranchSim">false</value>
+    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableCacheSim">false</value>
+    <value type="bool" key="Analyzer.Valgrind.Callgrind.EnableEventToolTips">true</value>
+    <value type="double" key="Analyzer.Valgrind.Callgrind.MinimumCostRatio">0.01</value>
+    <value type="double" key="Analyzer.Valgrind.Callgrind.VisualisationMinimumCostRatio">10</value>
+    <value type="bool" key="Analyzer.Valgrind.FilterExternalIssues">true</value>
+    <value type="QString" key="Analyzer.Valgrind.KCachegrindExecutable">kcachegrind</value>
+    <value type="int" key="Analyzer.Valgrind.LeakCheckOnFinish">1</value>
+    <value type="int" key="Analyzer.Valgrind.NumCallers">25</value>
+    <valuelist type="QVariantList" key="Analyzer.Valgrind.RemovedSuppressionFiles"/>
+    <value type="int" key="Analyzer.Valgrind.SelfModifyingCodeDetection">1</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.Valgrind.ShowReachable">false</value>
+    <value type="bool" key="Analyzer.Valgrind.TrackOrigins">true</value>
+    <value type="QString" key="Analyzer.Valgrind.ValgrindExecutable">valgrind</value>
+    <valuelist type="QVariantList" key="Analyzer.Valgrind.VisibleErrorKinds">
+     <value type="int">0</value>
+     <value type="int">1</value>
+     <value type="int">2</value>
+     <value type="int">3</value>
+     <value type="int">4</value>
+     <value type="int">5</value>
+     <value type="int">6</value>
+     <value type="int">7</value>
+     <value type="int">8</value>
+     <value type="int">9</value>
+     <value type="int">10</value>
+     <value type="int">11</value>
+     <value type="int">12</value>
+     <value type="int">13</value>
+     <value type="int">14</value>
+    </valuelist>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github/Notes/LearnOpenCV/Chapter12-ImageAnalysis/Chapter12-ImageAnalysis.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/github/Notes/LearnOpenCV/Chapter12-ImageAnalysis/Chapter12-ImageAnalysis.pro</value>
+    <value type="QString" key="RunConfiguration.Arguments"></value>
+    <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
+    <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
+    <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
+    <value type="bool" key="RunConfiguration.UseMultiProcess">false</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/github/Notes/build-LearnOpenCV-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/Chapter12-ImageAnalysis</value>
+   </valuemap>
+   <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">6</value>
   </valuemap>
  </data>
  <data>

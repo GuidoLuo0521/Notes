@@ -1518,6 +1518,12 @@ void cv::fastNlMeansDenoisingColoredMulti(
 
  直方图均衡化的作用是图像增强。 
 
+![image-20210704144120282](images/image-20210704144120282.png)
+
+​																									这是《opencv3编程入门》里的一个示意图。
+
+​		通过拉伸像素强度分布范围来增强图形对比度的一种方法。
+
 **1.直方图**
 
   		直方图表达的信息是每种亮度的像素点的个数，直方图用少量的数据表达图像的灰度统计特征。灰度级别在范围【0，L-1】的数字图像的直方图是一个离散函数，图像的灰度直方图只能反映图像的灰度分布情况，反映数字图像中每一灰度级与其出现频率间的关系，但它能描述该图像的概貌。
@@ -1544,3 +1550,123 @@ void cv::equalizeHist(
 ~~~
 
 In cv::equalizeHist(), the source src must be a single-channel, 8-bit image. The destination image dst will be the same. For color images, you will have to separate the channels and process them one by one.
+
+## Chapter12.  Image Analysis
+
+### **The Canny Edge Detector**
+
+Canny 边缘检测算法，见前面
+
+**函数原型**
+
+~~~c++
+void cv::Canny(
+ 	cv::InputArray image, // Input single channel image
+	 cv::OutputArray edges, // Output edge image
+ 	double threshold1, // "lower" threshold
+ 	double threshold2, // "upper" threshold
+ 	int apertureSize = 3, // Sobel aperture
+ 	bool L2gradient = false // true=L2-norm (more accurate)
+);
+~~~
+
+### **Hough Transforms**
+
+#### **Hough Line Transform**
+
+The basic theory of the Hough line transform is that any point in a ***binary image*** could be part of some set of possible lines. 所以，他的输入只能输入边缘二值图。
+
+支持的三种霍夫线变换
+
+* 标准霍夫线变换（SHT）
+* 多尺度霍夫变换（MSHT）
+* 累计概率霍夫变换（PPHT）
+
+OpenCV 中，可以用 `HoughLines()`标准霍夫线变换（SHT）和多尺度霍夫变换（MSHT），`HoughLinesP()`用于调用 累计概率霍夫变换（PPHT）
+
+**原理**
+
+直线在二维空间可以用两个变量表示
+
+* 迪卡尔坐标系：参数斜率和截距（m,b）表示
+* 极坐标系：由参数极径和极角（r，θ）表示
+
+Hough 线使用第二种，公式  `r = x cosθ  + y sinθ` 代表，每一对 `(r，θ)`代表一个通过 `（x,y）`的直线。然后在极坐标上绘制出通过（x,y）的直线，得到一条正弦曲线，所以，如果对所有的图像进行这样操作，那么这个图像通过（r，θ）点越多，说明组成这个直线的点越多。
+
+![image-20210704152616060](images/image-20210704152616060.png)
+
+##### SHT，MSHT
+
+**函数原型**
+
+~~~c++
+void cv::HoughLines(
+ 	cv::InputArray image, // Input single channel image
+ 	cv::OutputArray lines, // N-by-1 two-channel array
+ 	double rho, // rho resolution (pixels)
+ 	double theta, // theta resolution (radians)
+ 	int threshold, // Unnormalized accumulator threshold
+ 	double srn = 0, // rho refinement (for MHT)
+ 	double stn = 0 // theta refinement (for MHT)
+);
+~~~
+
+**参数含义：**
+
+* 输入图像。单通道
+* 输出线矢量，由（ρ,θ）组成，ρ为离坐标原点（0，0）左上角的距离，ρ为弧线线条旋转角度（0：垂直线，π/2水平线）
+* 像素为单位的距离精度，搜索时候步进尺寸的单位半径。
+* 弧度精度
+* 累加平面的阈值参数，识别某部分为图中一条直线时，它在累加平面中必须达到的值，大于才加入
+
+所以，一般流程：
+
+* 读图
+* 边缘检测为灰度图 canny，cvtColor
+* 霍夫变换
+
+![image-20210704161354258](images/image-20210704161354258.png)
+
+##### PPHT
+
+函数原型
+
+~~~c++
+C++: void HoughLinesP(
+    InputArray image, 
+    OutputArray lines, 
+    double rho, 
+    double theta, 
+    int threshold, 
+    double minLineLength=0, 
+    double maxLineGap=0 )
+~~~
+
+参数含义：
+
+第一个参数，InputArray类型的image，输入图像，即源图像，需为8位的单通道二进制图像，可以将任意的源图载入进来后由函数修改成此格式后，再填在这里。
+第二个参数，InputArray类型的lines，经过调用HoughLinesP函数后后存储了检测到的线条的输出矢量，每一条线由具有四个元素的矢量(x_1,y_1, x_2, y_2）  表示，其中，(x_1, y_1)和(x_2, y_2) 是是每个检测到的线段的结束点。
+第三个参数，double类型的rho，以像素为单位的距离精度。另一种形容方式是直线搜索时的进步尺寸的单位半径。
+第四个参数，double类型的theta，以弧度为单位的角度精度。另一种形容方式是直线搜索时的进步尺寸的单位角度。
+第五个参数，int类型的threshold，累加平面的阈值参数，即识别某部分为图中的一条直线时它在累加平面中必须达到的值。大于阈值threshold的线段才可以被检测通过并返回到结果中。
+第六个参数，double类型的minLineLength，有默认值0，表示最低线段的长度，比这个设定参数短的线段就不能被显现出来。
+第七个参数，double类型的maxLineGap，有默认值0，允许将同一行点与点之间连接起来的最大的距离。
+
+#### **Hough Circle Transform**
+
+**函数原型**
+
+~~~c++
+void cv::HoughCircles(
+ 	cv::InputArray image, // Input single channel image
+ 	cv::OutputArray circles, // N-by-1 3-channel or vector of Vec3f
+ 	int method, // Always cv::HOUGH_GRADIENT
+ 	double dp, // Accumulator resolution (ratio)
+ 	double minDist, // Required separation (between lines)
+ 	double param1 = 100, // Upper Canny threshold
+ 	double param2 = 100, // Unnormalized accumulator threshold
+ 	int minRadius = 0, // Smallest radius to consider
+ 	int maxRadius = 0 // Largest radius to consider
+);
+~~~
+
