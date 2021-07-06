@@ -3,67 +3,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 /// <summary>
-/// 以组装电脑为例子
-/// 每台电脑的组成过程都是一致的，但是使用同样的构建过程可以创建不同的表示(即可以组装成不一样的电脑，配置不一样)
-/// 组装电脑的这个场景就可以应用建造者模式来设计
+/// 以生产鸭脖为例子
+/// 每个鸭脖的组成过程都是一致的，但是使用同样的构建过程可以创建不同的表示(即可以组装成不一样味道的鸭脖)
+/// 生产鸭脖的这个场景就可以应用建造者模式来设计
 /// </summary>
 namespace BuilderPatternClass
 {
     /// <summary>
     /// 客户类
     /// </summary>
-    class Customer
+    class OldMan
     {
         static void Main(string[] args)
         {
-            // 客户找到电脑城老板说要买电脑，这里要装两台电脑
-            // 创建指挥者和构造者
-            Director director = new Director();
-            Builder b1 = new ConcreteBuilder1();
-            Builder b2 = new ConcreteBuilder2();
+            // 老头找老板说要买鸭脖，
+            // 创建老板和工人
+            Boss boss = new Boss();
+            Worker zhangsan = new WorkerZhangSan();
+            Worker lisi = new WorkerLiSi();
 
-            // 老板叫员工去组装第一台电脑
-            director.Construct(b1);
+            // 老板叫张三去生产鸭脖，这里老板控制总流程
+            // 所以，这里老板也可以抽象，每个老板生产不同的东西，或者流程不一样，
+            // 比如老板 B 先加辣椒再加盐巴
+            boss.ToProductYaBo(zhangsan);
 
-            // 组装完，组装人员搬来组装好的电脑
-            Computer computer1 = b1.GetComputer();
-            computer1.Show();
+            // 获取鸭脖
+            YaBo yabo = zhangsan.GetYaBo();
+            yabo.Show();
 
-            // 老板叫员工去组装第二台电脑
-            director.Construct(b2);
-            Computer computer2 = b2.GetComputer();
-            computer2.Show();
+            // 获取鸭脖
+            boss.ToProductYaBo(lisi);
+            YaBo yabo2 = lisi.GetYaBo();
+            yabo2.Show();
 
             Console.Read();
         }
     }
 
     /// <summary>
-    /// 小王和小李难道会自愿地去组装嘛，谁不想休息的，这必须有一个人叫他们去组装才会去的
-    /// 这个人当然就是老板了，也就是建造者模式中的指挥者
+    /// 张三和李四，老板没给工资是不会去的，所以，必须老板叫他们他们才去，这时候就要老板叫某人了，去做什么做什么
+    /// 老板也就是建造者模式中的指挥者，张三李四就是工人，就像个机器人
     /// 指挥创建过程类
     /// </summary>
-    public class Director
+    public class Boss
     {
-        // 组装电脑
-        public void Construct(Builder builder)
+        // 组装鸭脖
+        public void ToProductYaBo(Worker builder)
         {
-            builder.BuildPartCPU();
-            builder.BuildPartMainBoard();
+            builder.BuildPartSalt();
+            builder.BuildPartLaJiao();
         }
     }
 
     /// <summary>
-    /// 电脑类
+    /// 鸭脖
     /// </summary>
-    public class Computer
+    public class YaBo
     {
-        // 电脑组件集合
+        // 鸭脖调料集合
         private IList<string> parts = new List<string>();
 
-        // 把单个组件添加到电脑组件集合中
+        // 把调料添加到鸭脖里面
         public void Add(string part)
         {
             parts.Add(part);
@@ -71,74 +72,74 @@ namespace BuilderPatternClass
 
         public void Show()
         {
-            Console.WriteLine("电脑开始在组装.......");
+            Console.WriteLine("开始生产鸭脖.......");
             foreach (string part in parts)
             {
-                Console.WriteLine("组件" + part + "已装好");
+                Console.WriteLine(part + "已加入");
             }
 
-            Console.WriteLine("电脑组装好了");
+            Console.WriteLine("鸭脖已经生产好了");
         }
     }
 
     /// <summary>
-    /// 抽象建造者，这个场景下为 "组装人" ，这里也可以定义为接口
+    /// 抽象建造者，这个场景下为 "工人" ，这里也可以定义为接口
     /// </summary>
-    public abstract class Builder
+    public abstract class Worker
     {
-        // 装CPU
-        public abstract void BuildPartCPU();
-        // 装主板
-        public abstract void BuildPartMainBoard();
+        // 放盐
+        public abstract void BuildPartSalt();
+        // 放辣椒
+        public abstract void BuildPartLaJiao();
 
-        // 当然还有装硬盘，电源等组件，这里省略
+        // 其他香料。。。这里省略
 
-        // 获得组装好的电脑
-        public abstract Computer GetComputer();
+        // 返回鸭脖
+        public abstract YaBo GetYaBo();
     }
 
     /// <summary>
     /// 具体创建者，具体的某个人为具体创建者，例如：装机小王啊
     /// </summary>
-    public class ConcreteBuilder1 : Builder
+    public class WorkerZhangSan : Worker
     {
-        Computer computer = new Computer();
-        public override void BuildPartCPU()
+        YaBo yabo = new YaBo();
+
+        public override void BuildPartSalt()
         {
-            computer.Add("CPU1");
+            yabo.Add("盐巴");
         }
 
-        public override void BuildPartMainBoard()
+        public override void BuildPartLaJiao()
         {
-            computer.Add("Main board1");
+            yabo.Add("魔鬼椒");
         }
 
-        public override Computer GetComputer()
+        public override YaBo GetYaBo()
         {
-            return computer;
+            return yabo;
         }
     }
 
     /// <summary>
-    /// 具体创建者，具体的某个人为具体创建者，例如：装机小李啊
-    /// 又装另一台电脑了
+    /// 具体创建者，具体的某个人为具体创建者，例如：装机张三啊，可能他放的盐巴多一点或者辣椒不一样
     /// </summary>
-    public class ConcreteBuilder2 : Builder
+    public class WorkerLiSi : Worker
     {
-        Computer computer = new Computer();
-        public override void BuildPartCPU()
+        YaBo yabo = new YaBo();
+        public override void BuildPartSalt()
         {
-            computer.Add("CPU2");
+            yabo.Add("盐巴巴巴");
         }
 
-        public override void BuildPartMainBoard()
+        public override void BuildPartLaJiao()
         {
-            computer.Add("Main board2");
+            yabo.Add("朝天椒");
         }
 
-        public override Computer GetComputer()
+        public override YaBo GetYaBo()
         {
-            return computer;
+            return yabo;
         }
     }
 }
