@@ -10,7 +10,9 @@ int main(int argc, char *argv[])
 
     //HoughLinesP();
 
-    HoughCircles();
+    //HoughCircles();
+
+    FloodFill();
 
     return a.exec();
 }

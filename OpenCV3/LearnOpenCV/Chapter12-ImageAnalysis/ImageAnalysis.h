@@ -128,6 +128,16 @@ void HoughCircles()
 
 }
 
+void FloodFill()
+{
+    cv::Mat src = cv::imread("d:/TestImages/Snipaste_2021-07-04_16-14-15.png"), mid, dst;
+
+    //
+    cv::floodFill(src, cv::Point(5,10), cv::Scalar(0, 0 , 255), nullptr, 7, 7);
+
+    //
+    cv::imshow("floodFill", src);
+}
 
 
 
