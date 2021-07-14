@@ -35,6 +35,14 @@ private slots:
 
     void on_btnProgress_clicked();
 
+    void on_btnPalette_clicked();
+
+    void on_btnTime_clicked();
+
+    void on_btnExtenWidget_clicked();
+
+    void on_btnShapeWidget_clicked();
+
 private:
     Ui::MainWindow *ui;
 

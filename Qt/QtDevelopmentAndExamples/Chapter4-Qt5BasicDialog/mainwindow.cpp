@@ -1,7 +1,11 @@
 ﻿#include "mainwindow.h"
+#include "qtpalette.h"
 #include "qtprogress.h"
+#include "qttimedialog.h"
 #include "qttoolbox.h"
+#include "qtextensionwidget.h"
 #include "ui_mainwindow.h"
+#include "shapewidget.h"
 
 #include <QDebug>
 
@@ -59,7 +63,7 @@ void MainWindow::on_btnColorDialog_clicked()
         ui->frameColor->setFrameShape(QFrame::Box);
 
         // 当使用QPalette为窗口设定背景并使用QPalette::Window时
-        // 必须调用setAutoFillBackground(true)!!!
+        // 必须调用setAutoFillBackground(true)!!! 设置自动填充背景
         ui->frameColor->setAutoFillBackground(true);
         ui->frameColor->setPalette(QPalette(color));
     }
@@ -141,4 +145,29 @@ void MainWindow::on_btnProgress_clicked()
 {
     QtProgress * pProgress = new QtProgress();
     pProgress->show();
+
+}
+
+void MainWindow::on_btnPalette_clicked()
+{
+    QtPalette * pPalette = new QtPalette;
+    pPalette->show();
+}
+
+void MainWindow::on_btnTime_clicked()
+{
+    QtTimeDialog * pTimerDlg = new QtTimeDialog;
+    pTimerDlg->show();
+}
+
+void MainWindow::on_btnExtenWidget_clicked()
+{
+    QtExtensionWidget * pExten = new QtExtensionWidget;
+    pExten->show();
+}
+
+void MainWindow::on_btnShapeWidget_clicked()
+{
+    ShapeWidget * pShape = new ShapeWidget;
+    pShape->show();
 }

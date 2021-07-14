@@ -17,31 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    qtextensionwidget.cpp \
-    qtpalette.cpp \
-    qttimedialog.cpp \
-    qttoolbox.cpp   \
-    qtprogress.cpp \
-    shapewidget.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h \
-    qtextensionwidget.h \
-    qtpalette.h \
-    qttimedialog.h \
-    qttoolbox.h \
-    qtprogress.h \
-    shapewidget.h
-
+    mainwindow.h
 FORMS += \
-    mainwindow.ui \
-    qtextensionwidget.ui \
-    qtpalette.ui \
-    qttoolbox.ui    \
-    qtprogress.ui \
-    shapewidget.ui
-
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
