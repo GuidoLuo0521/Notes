@@ -25,6 +25,16 @@ private slots:
 
     void on_btnFontDialog_clicked();
 
+    void on_btnInputDialog_clicked();
+
+    void on_btnStdMsgDialog_clicked();
+
+    void on_btnCustomerMsgDialog_clicked();
+
+    void on_btnToolBox_clicked();
+
+    void on_btnProgress_clicked();
+
 private:
     Ui::MainWindow *ui;
 

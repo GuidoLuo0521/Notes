@@ -6,45 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>317</height>
+    <width>602</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>9</x>
       <y>9</y>
-      <width>471</width>
-      <height>251</height>
+      <width>581</width>
+      <height>471</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout" columnstretch="3,7">
-     <item row="4" column="0">
-      <widget class="QPushButton" name="btnCustomerMsgDialog">
-       <property name="text">
-        <string>用户自定义消息对话框实例</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lleStdFont">
-       <property name="text">
-        <string>Welcome</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QPushButton" name="btnStdMsgDialog">
-       <property name="text">
-        <string>标准消息对话框实例</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="btnFileDilog">
        <property name="text">
@@ -52,20 +31,17 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="leCustomerMsg"/>
+     <item row="4" column="0">
+      <widget class="QPushButton" name="btnCustomerMsgDialog">
+       <property name="text">
+        <string>用户自定义消息对话框实例</string>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QPushButton" name="btnColorDialog">
        <property name="text">
         <string>颜色标准对话框实例</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="btnFontDialog">
-       <property name="text">
-        <string>字体标准对话框实例</string>
        </property>
       </widget>
      </item>
@@ -153,6 +129,44 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lleStdFont">
+       <property name="text">
+        <string>Welcome</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="leCustomerMsg"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="btnToolBox">
+       <property name="text">
+        <string>抽屉盒实例</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="btnFontDialog">
+       <property name="text">
+        <string>字体标准对话框实例</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="btnStdMsgDialog">
+       <property name="text">
+        <string>标准消息对话框实例</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QPushButton" name="btnProgress">
+       <property name="text">
+        <string>进度条</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -161,7 +175,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>497</width>
+     <width>602</width>
      <height>23</height>
     </rect>
    </property>
