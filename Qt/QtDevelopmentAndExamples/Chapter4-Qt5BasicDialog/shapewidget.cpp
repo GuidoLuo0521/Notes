@@ -4,7 +4,7 @@
 #include <QBitmap>
 #include <QPainter>
 
-static QString gs_FilePath = "f:\\1589794028093478392water.jpg";
+static QString gs_FilePath = "d:\\11.png";
 
 ShapeWidget::ShapeWidget(QWidget *parent) :
     QWidget(parent),

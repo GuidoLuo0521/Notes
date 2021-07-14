@@ -16,11 +16,15 @@
 #include <QMessageBox>          // 消息对话框
 
 
+#include <windows.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    Sleep(3000);
 }
 
 MainWindow::~MainWindow()
