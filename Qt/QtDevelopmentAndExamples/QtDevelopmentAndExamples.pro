@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    Chapter3-Qt5LayoutManager \
-    Chapter4-Qt5BasicDialog
+    Chapter03-Qt5LayoutManager \
+    Chapter04-Qt5BasicDialog		\
+	Chapter05-Qt5MainWindow \

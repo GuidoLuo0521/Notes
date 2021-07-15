@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file>icons/bold.png</file>
+        <file>icons/center.png</file>
+        <file>icons/color.png</file>
+        <file>icons/copy.png</file>
+        <file>icons/cut.png</file>
+        <file>icons/image.png</file>
+        <file>icons/italic.png</file>
+        <file>icons/justify.png</file>
+        <file>icons/left.png</file>
+        <file>icons/new.png</file>
+        <file>icons/open.png</file>
+        <file>icons/paste.png</file>
+        <file>icons/printImage.png</file>
+        <file>icons/printText.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/right.png</file>
+        <file>icons/rotate90.png</file>
+        <file>icons/rotate180.png</file>
+        <file>icons/rotate270.png</file>
+        <file>icons/underline.png</file>
+        <file>icons/undo.png</file>
+        <file>icons/zoomin.png</file>
+        <file>icons/zoomout.png</file>
+        <file>icons/save.bmp</file>
+        <file>icons/saveas.bmp</file>
+        <file>icons/aboutQt.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/time.png</file>
+        <file>icons/insertimage.png</file>
+    </qresource>
+</RCC>

@@ -133,10 +133,12 @@ void MainWindow::on_btnStacked_clicked()
 void MainWindow::on_btnRead_clicked()
 {
     QFile file("f:\\tst230.bin");
-    if( file.open( QIODevice::ReadOnly | QIODevice::Text ) )
+    if( file.open( QIODevice::ReadOnly) )
     {
+        ui->textEdit->clear();
         QTextStream stream(&file);
-        ui->textEdit->append(stream.readAll());
+        QString str = stream.readAll();
+        QByteArray str2 = str.toUtf8();
+        ui->textEdit->append(str2.toHex().toUpper());
     }
-
 }
