@@ -29,5 +29,7 @@
         <file>icons/delete.png</file>
         <file>icons/time.png</file>
         <file>icons/insertimage.png</file>
+        <file>icons/text.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QFontComboBox>
 #include <QTextEdit>
+#include <QToolButton>
 
 namespace Ui {
 class EasyWord;
@@ -61,18 +62,19 @@ private:
     QFontComboBox * m_pComboBoxFontType;
     QComboBox * m_pComboxFontSize;
 
-    QAction * m_pBoldAction ;
-    QAction * m_pItalicAction ;
-    QAction * m_pUnderlineAction ;
-    QAction * m_pColorAction ;
+    QToolButton * m_pBoldToolButton ;
+    QToolButton * m_pItalicToolButton ;
+    QToolButton * m_pUnderlineToolButton ;
+    QToolButton * m_pColorToolButton ;
 
-    QAction * m_pAlignLeftAction ;
-    QAction * m_pAlignRightAction ;
-    QAction * m_pAlignCenterAction ;
+    QToolButton * m_pAlignLeftToolButton ;
+    QToolButton * m_pAlignRightToolButton ;
+    QToolButton * m_pAlignCenterToolButton ;
 
     QAction * m_pInsertImageAction ;
+    QAction * m_pInsertTextAction ;
 
-private slots:
+public slots:
     // ÎÄ¼þ action
     void New();
     void Open();
@@ -95,16 +97,27 @@ private slots:
     void Rotate180();
     void Rotate270();
 
+    void Bold();
+    void Italic();
+    void Underline();
+    void Color();
+
+    void AlignLeft();
+    void AlignCenter();
+    void AlignRight();
+    void ShowCurrentFormatChanged(const QTextCharFormat &fmt);
+
     // °ïÖú
     void AboutNotepad();
     void AboutQt();
 
     // Í¼Ïñ
     void InsertImage();
-
+    void InsertFile();
 
 private:
     void CreateAction();
+    void CreateMenuWidget();
     void InitMenuBar();
     void InitToolBar();
     void AddTextEditContextMenu();
