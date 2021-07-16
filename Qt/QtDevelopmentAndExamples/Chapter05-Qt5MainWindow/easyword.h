@@ -11,6 +11,7 @@
 #include <QFontComboBox>
 #include <QTextEdit>
 #include <QToolButton>
+#include <QLabel>
 
 namespace Ui {
 class EasyWord;
@@ -30,7 +31,7 @@ private:
 private:
     QTextEdit * m_pTextEdit;
 
-    // ÎÄ¼þ
+
     QMenu * m_pMenuFile ;
     QAction * m_pNewAction ;
     QAction * m_pOpenAction ;
@@ -38,14 +39,11 @@ private:
     QAction * m_pSaveAsAction ;
     QAction * m_pPrintAction ;
 
-    // ±à¼­
     QMenu * m_pMenuEdit;
     QAction * m_pRedoAction ;
     QAction * m_pCutAction ;
     QAction * m_pCopyAction ;
     QAction * m_pPasteAction ;
-    QAction * m_pDeleteAction ;
-    QAction * m_pTimeAndDateAction ;
 
     QAction * m_pZoomInAction ;
     QAction * m_pZoomOutAction ;
@@ -53,12 +51,16 @@ private:
     QAction * m_pRotate180Action ;
     QAction * m_pRotate270Action ;
 
-    //°ïÖú
+    QAction * m_pInsertTimeAction ;
+    QAction * m_pInsertTextAction ;
+    QAction * m_pInsertImageAction ;
+
+
     QMenu * m_pHelpMenu;
     QAction * m_pAbouNotepadAction ;
     QAction * m_pAboutQtAction ;
 
-    // toolbar
+
     QFontComboBox * m_pComboBoxFontType;
     QComboBox * m_pComboxFontSize;
 
@@ -66,31 +68,25 @@ private:
     QToolButton * m_pItalicToolButton ;
     QToolButton * m_pUnderlineToolButton ;
     QToolButton * m_pColorToolButton ;
+    QLabel * m_pLabelFontColor;
 
     QToolButton * m_pAlignLeftToolButton ;
     QToolButton * m_pAlignRightToolButton ;
     QToolButton * m_pAlignCenterToolButton ;
+    QToolButton * m_pAlignJustifyToolButton ;
 
-    QAction * m_pInsertImageAction ;
-    QAction * m_pInsertTextAction ;
+
 
 public slots:
     // ÎÄ¼þ action
     void New();
     void Open();
     void Save();
-    void SaveAs();
-    void PageSet();
-    void Print();
     void Exit();
+    void Print();
+    void SaveAs();
 
     // ±à¼­ action
-    void Redo();
-    void Cut();
-    void Copy();
-    void Paste();
-    void Delete();
-    void TimeAndDate();
     void ZoomIn();
     void ZoomOut();
     void Rotate90();
@@ -98,29 +94,32 @@ public slots:
     void Rotate270();
 
     void Bold();
+    void Color();
     void Italic();
     void Underline();
-    void Color();
 
     void AlignLeft();
-    void AlignCenter();
     void AlignRight();
+    void AlignCenter();
+    void AlignJustify();
     void ShowCurrentFormatChanged(const QTextCharFormat &fmt);
 
     // °ïÖú
-    void AboutNotepad();
     void AboutQt();
+    void AboutNotepad();    
 
-    // Í¼Ïñ
-    void InsertImage();
+    // ²åÈë
+    void InsertTime();
     void InsertFile();
+    void InsertImage();
 
 private:
     void CreateAction();
     void CreateMenuWidget();
+    void AddTextEditContextMenu();
     void InitMenuBar();
     void InitToolBar();
-    void AddTextEditContextMenu();
+
     void Binding();
 
 };

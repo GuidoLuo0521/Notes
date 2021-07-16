@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QTextDocumentFragment>
 
+#include <QColorDialog>
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFontComboBox>
@@ -24,6 +25,15 @@ EasyWord::EasyWord(QMainWindow *parent) :
     ui->setupUi(this);
 
     setWindowTitle("Millet Word");
+
+    m_pTextEdit = new QTextEdit;
+    setCentralWidget(m_pTextEdit);
+
+    QTextDocumentFragment fragment;
+    fragment = QTextDocumentFragment::fromHtml("<img width=80 height=50 "
+                                               "src=':/Icons/icons/delete.png'>");
+    //m_pTextEdit->textCursor().insertFragment(fragment);
+    m_pTextEdit->setFont(QFont("宋体", 20));
 
     CreateAction();
     CreateMenuWidget();
@@ -68,10 +78,7 @@ void EasyWord::SaveAs()
 {
 
 }
-void EasyWord::PageSet()
-{
 
-}
 void EasyWord::Print()
 {
 
@@ -81,28 +88,7 @@ void EasyWord::Exit()
 
 }
 
-void EasyWord::Redo()
-{
-
-}
-void EasyWord::Cut()
-{
-    QMessageBox::warning(this, "11", __FUNCTION__);
-}
-void EasyWord::Copy()
-{
-
-}
-void EasyWord::Paste()
-{
-
-}
-void EasyWord::Delete()
-{
-
-}
-
-void EasyWord::TimeAndDate()
+void EasyWord::InsertTime()
 {
     QString strTime = QTime::currentTime().toString();
     //m_pTextEdit->append("strTime");
@@ -138,42 +124,62 @@ void EasyWord::Rotate270()
 
 void EasyWord::Bold()
 {
-    m_pBoldToolButton->setChecked(!m_pBoldToolButton->isChecked());
-
     QTextCharFormat fmt;
     fmt.setFontWeight( m_pBoldToolButton->isChecked() ? QFont::Bold : QFont::Normal);
-    m_pTextEdit->mergeCurrentCharFormat(fmt);
+    //m_pTextEdit->mergeCurrentCharFormat(fmt);
+    m_pTextEdit->setFontWeight(m_pBoldToolButton->isChecked() ? QFont::Bold : QFont::Normal);
 
+    /*
+     * 调用QTextCursor的mergeCharFormat()函数把参数format所表示的格式应用到光标所在处的字符上
+     * 调用QTextEdit的mergeCurrentCharFormat()函数把格式应用到选区内的所有字符上。
+    */
 }
 
 void EasyWord::Italic()
 {
-
+    QTextCharFormat fmt;
+    fmt.setFontItalic( m_pItalicToolButton->isChecked());
+    m_pTextEdit->mergeCurrentCharFormat(fmt);
 }
 
 void EasyWord::Underline()
 {
-
+    QTextCharFormat fmt;
+    fmt.setFontUnderline( m_pUnderlineToolButton->isChecked());
+    m_pTextEdit->mergeCurrentCharFormat(fmt);
 }
 
 void EasyWord::Color()
 {
+    QColor color = QColorDialog::getColor( Qt::red, this);
+    if(color.isValid())
+    {
+        QTextCharFormat fmt;
+        fmt.setForeground(color);
+        m_pTextEdit->mergeCurrentCharFormat(fmt);
 
+        QPalette plt(color);
+        m_pLabelFontColor->setPalette(plt);
+    }
 }
 
 void EasyWord::AlignLeft()
 {
-
+    m_pTextEdit->setAlignment(Qt::AlignLeft);
 }
 
 void EasyWord::AlignCenter()
 {
-
+    m_pTextEdit->setAlignment(Qt::AlignCenter);
 }
 
 void EasyWord::AlignRight()
 {
-
+    m_pTextEdit->setAlignment(Qt::AlignRight);
+}
+void EasyWord::AlignJustify()
+{
+    m_pTextEdit->setAlignment(Qt::AlignJustify);
 }
 
 void EasyWord::ShowCurrentFormatChanged(const QTextCharFormat &fmt)
@@ -183,6 +189,9 @@ void EasyWord::ShowCurrentFormatChanged(const QTextCharFormat &fmt)
     m_pBoldToolButton->setChecked(fmt.font().bold());
     m_pItalicToolButton->setChecked(fmt.fontItalic());
     m_pUnderlineToolButton->setChecked(fmt.fontUnderline());
+
+
+
 }
 
 void EasyWord::AboutNotepad()
@@ -222,16 +231,6 @@ void EasyWord::InsertFile()
 
 void EasyWord::CreateAction()
 {
-
-    m_pTextEdit = new QTextEdit;
-    setCentralWidget(m_pTextEdit);
-
-    QTextDocumentFragment fragment;
-    fragment = QTextDocumentFragment::fromHtml("<img width=80 height=50 "
-                                               "src=':/Icons/icons/delete.png'>");
-    m_pTextEdit->textCursor().insertFragment(fragment);
-    m_pTextEdit->setFont(QFont("宋体", 20));
-
     // 文件
     m_pNewAction = new QAction("新建(&N)");
     m_pNewAction->setToolTip("新建");
@@ -279,15 +278,10 @@ void EasyWord::CreateAction()
     m_pPasteAction->setShortcut(QKeySequence::Paste);
     m_pPasteAction->setIcon(QIcon(":/Icons/icons/paste.png"));
 
-    m_pDeleteAction = new QAction("删除(&L)");
-    m_pDeleteAction->setToolTip("删除");
-    m_pDeleteAction->setShortcut(QKeySequence::Delete);
-    m_pDeleteAction->setIcon(QIcon(":/Icons/icons/delete.png"));
-
-    m_pTimeAndDateAction = new QAction("时间/日期(&F5)");
-    m_pTimeAndDateAction->setToolTip("插入时间");
-    m_pTimeAndDateAction->setShortcut(QKeySequence("F5"));
-    m_pTimeAndDateAction->setIcon(QIcon(":/Icons/icons/time.png"));
+    m_pInsertTimeAction = new QAction("时间/日期(&F5)");
+    m_pInsertTimeAction->setToolTip("插入时间");
+    m_pInsertTimeAction->setShortcut(QKeySequence("F5"));
+    m_pInsertTimeAction->setIcon(QIcon(":/Icons/icons/time.png"));
 
     m_pZoomInAction = new QAction("放大");
     m_pZoomInAction->setShortcut(QKeySequence("Ctrl+="));
@@ -309,6 +303,12 @@ void EasyWord::CreateAction()
     m_pRotate270Action->setShortcut(QKeySequence("Ctrl+Left"));
     m_pRotate270Action->setIcon(QIcon(":/Icons/icons/rotate270.png"));
 
+    m_pInsertImageAction = new QAction("插入图片");
+    m_pInsertImageAction->setIcon(QIcon(":/Icons/icons/insertimage.png"));
+
+    m_pInsertTextAction = new QAction("插入文件");
+    m_pInsertTextAction->setIcon(QIcon(":/Icons/icons/text.png"));
+
     // 帮助
     m_pAbouNotepadAction = new QAction("关于记事本(&A)");
     m_pAbouNotepadAction->setToolTip("关于记事本");
@@ -318,8 +318,10 @@ void EasyWord::CreateAction()
     m_pAboutQtAction->setToolTip("关于Qt");
     m_pAboutQtAction->setIcon(QIcon(":/Icons/icons/aboutQt.png"));
 
+}
 
-    // toolbar
+void EasyWord::CreateMenuWidget()
+{
     m_pComboBoxFontType = new QFontComboBox;
     m_pComboBoxFontType->setFontFilters(QFontComboBox::ScalableFonts);
 
@@ -329,30 +331,23 @@ void EasyWord::CreateAction()
         m_pComboxFontSize->addItem(QString::number(size));
     m_pComboxFontSize->setCurrentText("20");
 
-    m_pInsertImageAction = new QAction("插入图片");
-    m_pInsertImageAction->setIcon(QIcon(":/Icons/icons/insertimage.png"));
-
-    m_pInsertTextAction = new QAction("插入文件");
-    m_pInsertTextAction->setIcon(QIcon(":/Icons/icons/text.png"));
-
-}
-
-void EasyWord::CreateMenuWidget()
-{
     m_pBoldToolButton = new QToolButton;
     m_pBoldToolButton->setToolTip("加粗");
+    m_pBoldToolButton->setCheckable(true);
     m_pBoldToolButton->setChecked(false);
     m_pBoldToolButton->setShortcut(QKeySequence::Bold);
     m_pBoldToolButton->setIcon(QIcon(":/Icons/icons/bold.png"));
 
     m_pItalicToolButton = new QToolButton;
     m_pItalicToolButton->setToolTip("斜体");
+    m_pItalicToolButton->setCheckable(true);
     m_pItalicToolButton->setChecked(false);
     m_pItalicToolButton->setShortcut(QKeySequence::Italic);
     m_pItalicToolButton->setIcon(QIcon(":/Icons/icons/italic.png"));
 
     m_pUnderlineToolButton = new QToolButton;
     m_pUnderlineToolButton->setToolTip("下划线");
+    m_pUnderlineToolButton->setCheckable(true);
     m_pUnderlineToolButton->setChecked(false);
     m_pUnderlineToolButton->setShortcut(QKeySequence::Underline);
     m_pUnderlineToolButton->setIcon(QIcon(":/Icons/icons/underline.png"));
@@ -373,6 +368,10 @@ void EasyWord::CreateMenuWidget()
     m_pAlignRightToolButton = new QToolButton;
     m_pAlignRightToolButton->setToolTip("右对齐");
     m_pAlignRightToolButton->setIcon(QIcon(":/Icons/icons/right.png"));
+
+    m_pAlignJustifyToolButton = new QToolButton;
+    m_pAlignJustifyToolButton->setToolTip("两边对齐");
+    m_pAlignJustifyToolButton->setIcon(QIcon(":/Icons/icons/justify.png"));
 }
 
 
@@ -400,8 +399,6 @@ void EasyWord::InitMenuBar()
     m_pMenuEdit->addAction(m_pCutAction);
     m_pMenuEdit->addAction(m_pCopyAction);
     m_pMenuEdit->addAction(m_pPasteAction);
-    m_pMenuEdit->addAction(m_pDeleteAction);
-    m_pMenuEdit->addAction(m_pTimeAndDateAction);
     m_pMenuEdit->addSeparator();
     m_pMenuEdit->addAction(m_pZoomInAction);
     m_pMenuEdit->addAction(m_pZoomOutAction);
@@ -410,7 +407,6 @@ void EasyWord::InitMenuBar()
     m_pMenuEdit->addAction(m_pRotate270Action);
 
     pMenuBar->addMenu(m_pMenuEdit);
-
 
     // 帮助
     QMenu * pMenu = new QMenu(tr("帮助(&H)"));
@@ -436,9 +432,8 @@ void EasyWord::InitToolBar()
     pToolBarTextEdit->addAction(m_pCutAction);
     pToolBarTextEdit->addAction(m_pCopyAction);
     pToolBarTextEdit->addAction(m_pPasteAction);
-    pToolBarTextEdit->addAction(m_pDeleteAction);
     pToolBarTextEdit->addSeparator();
-    pToolBarTextEdit->addAction(m_pTimeAndDateAction);
+    pToolBarTextEdit->addAction(m_pInsertTimeAction);
     pToolBarTextEdit->addAction(m_pInsertTextAction);
     pToolBarTextEdit->addAction(m_pInsertImageAction);
     this->addToolBar(pToolBarTextEdit);
@@ -454,6 +449,15 @@ void EasyWord::InitToolBar()
     QToolBar * pToolBarText = new QToolBar("文本编辑");
     QLabel * pLabelFontType = new QLabel("字体：");
     QLabel * pLabelFontSize = new QLabel("字号：");
+    m_pLabelFontColor = new QLabel;
+    m_pLabelFontColor->resize(20, 20);
+    m_pLabelFontColor->setFrameShape(QFrame::Box);
+
+    // 当使用QPalette为窗口设定背景并使用QPalette::Window时
+    // 必须调用setAutoFillBackground(true)!!!
+    m_pLabelFontColor->setAutoFillBackground(true);
+    m_pLabelFontColor->setPalette(QPalette(Qt::GlobalColor::black));
+
     pToolBarText->addWidget(pLabelFontType);
     pToolBarText->addWidget(m_pComboBoxFontType);
     pToolBarText->addSeparator();
@@ -463,14 +467,17 @@ void EasyWord::InitToolBar()
     pToolBarText->addWidget(m_pBoldToolButton);
     pToolBarText->addWidget(m_pItalicToolButton);
     pToolBarText->addWidget(m_pUnderlineToolButton);
+    pToolBarText->addSeparator();
     pToolBarText->addWidget(m_pColorToolButton);
+    pToolBarText->addWidget(m_pLabelFontColor);
     pToolBarText->addSeparator();
     pToolBarText->addWidget(m_pAlignLeftToolButton);
     pToolBarText->addWidget(m_pAlignCenterToolButton);
     pToolBarText->addWidget(m_pAlignRightToolButton);
+    pToolBarText->addWidget(m_pAlignJustifyToolButton);
+
 
     this->addToolBar(pToolBarText);
-
 }
 
 void EasyWord::AddTextEditContextMenu()
@@ -489,38 +496,77 @@ void EasyWord::AddTextEditContextMenu()
 
 void EasyWord::Binding()
 {
-    connect(m_pNewAction, SIGNAL(triggered()), this, SLOT(New()));
-    connect(m_pOpenAction, SIGNAL(triggered()), this, SLOT(Open()));
-    connect(m_pSaveAction, SIGNAL(triggered()), this, SLOT(Save()));
-    connect(m_pSaveAsAction, SIGNAL(triggered()), this, SLOT(SaveAs()));
-    connect(m_pPrintAction, SIGNAL(triggered()), this, SLOT(Print()));
+    //方式一
+    //connect(m_pNewAction, SIGNAL(triggered()), this, SLOT(New()));
+    //connect(m_pOpenAction, SIGNAL(triggered()), this, SLOT(Open()));
+    //connect(m_pSaveAction, SIGNAL(triggered()), this, SLOT(Save()));
+    //connect(m_pSaveAsAction, SIGNAL(triggered()), this, SLOT(SaveAs()));
+    //connect(m_pPrintAction, SIGNAL(triggered()), this, SLOT(Print()));
+    //
+    //connect(m_pRedoAction, SIGNAL(triggered()), m_pTextEdit, SLOT(Redo()));
+    //connect(m_pCutAction, SIGNAL(triggered()), m_pTextEdit, SLOT(Cut()));
+    //connect(m_pCopyAction, SIGNAL(triggered()), m_pTextEdit, SLOT(Copy()));
+    //connect(m_pPasteAction, SIGNAL(triggered()), m_pTextEdit, SLOT(Paste()));
+    //connect(m_pDeleteAction, SIGNAL(triggered()), m_pTextEdit, SLOT(Delete()));
+    //connect(m_pTimeAndDateAction, SIGNAL(triggered()), this, SLOT(TimeAndDate()));
+    //connect(m_pZoomInAction, SIGNAL(triggered()), this, SLOT(ZoomIn()));
+    //connect(m_pZoomOutAction, SIGNAL(triggered()), this, SLOT(ZoomOut()));
+    //connect(m_pRotate90Action, SIGNAL(triggered()), this, SLOT(Rotate90()));
+    //connect(m_pRotate180Action, SIGNAL(triggered()), this, SLOT(Rotate180()));
+    //connect(m_pRotate270Action, SIGNAL(triggered()), this, SLOT(Rotate270()));
 
-    connect(m_pRedoAction, SIGNAL(triggered()), this, SLOT(Redo()));
-    connect(m_pCutAction, SIGNAL(triggered()), this, SLOT(Cut()));
-    connect(m_pCopyAction, SIGNAL(triggered()), this, SLOT(Copy()));
-    connect(m_pPasteAction, SIGNAL(triggered()), this, SLOT(Paste()));
-    connect(m_pDeleteAction, SIGNAL(triggered()), this, SLOT(Delete()));
-    connect(m_pTimeAndDateAction, SIGNAL(triggered()), this, SLOT(TimeAndDate()));
-    connect(m_pZoomInAction, SIGNAL(triggered()), this, SLOT(ZoomIn()));
-    connect(m_pZoomOutAction, SIGNAL(triggered()), this, SLOT(ZoomOut()));
-    connect(m_pRotate90Action, SIGNAL(triggered()), this, SLOT(Rotate90()));
-    connect(m_pRotate180Action, SIGNAL(triggered()), this, SLOT(Rotate180()));
-    connect(m_pRotate270Action, SIGNAL(triggered()), this, SLOT(Rotate270()));
+
+    connect(m_pNewAction, &QAction::triggered, this, &EasyWord::New);
+    connect(m_pOpenAction, &QAction::triggered, this, &EasyWord::Open);
+    connect(m_pSaveAction, &QAction::triggered, this, &EasyWord::Save);
+    connect(m_pPrintAction, &QAction::triggered, this, &EasyWord::Print);
+    connect(m_pSaveAsAction, &QAction::triggered, this, &EasyWord::SaveAs);
+
+    connect(m_pCutAction, &QAction::triggered, m_pTextEdit, &QTextEdit::cut);
+    connect(m_pCopyAction, &QAction::triggered, m_pTextEdit,&QTextEdit::copy);
+    connect(m_pRedoAction, &QAction::triggered, m_pTextEdit, &QTextEdit::redo);
+    connect(m_pPasteAction, &QAction::triggered, m_pTextEdit, &QTextEdit::paste);
+
+    connect(m_pZoomInAction, &QAction::triggered, this, &EasyWord::ZoomIn);
+    connect(m_pZoomOutAction, &QAction::triggered, this, &EasyWord::ZoomOut);
+    connect(m_pRotate90Action, &QAction::triggered, this, &EasyWord::Rotate90);
+    connect(m_pRotate180Action, &QAction::triggered, this, &EasyWord::Rotate180);
+    connect(m_pRotate270Action, &QAction::triggered, this, &EasyWord::Rotate270);
 
     connect(m_pBoldToolButton, &QToolButton::clicked, this, &EasyWord::Bold);
+    connect(m_pColorToolButton, &QToolButton::clicked, this, &EasyWord::Color);
     connect(m_pItalicToolButton, &QToolButton::clicked, this, &EasyWord::Italic);
     connect(m_pUnderlineToolButton, &QToolButton::clicked, this, &EasyWord::Underline);
-    connect(m_pColorToolButton, &QToolButton::clicked, this, &EasyWord::Color);
 
     connect(m_pAlignLeftToolButton, &QToolButton::clicked, this, &EasyWord::AlignLeft);
-    connect(m_pAlignCenterToolButton, &QToolButton::clicked, this, &EasyWord::AlignCenter);
     connect(m_pAlignRightToolButton, &QToolButton::clicked, this, &EasyWord::AlignRight);
+    connect(m_pAlignCenterToolButton, &QToolButton::clicked, this, &EasyWord::AlignCenter);
+    connect(m_pAlignJustifyToolButton, &QToolButton::clicked, this, &EasyWord::AlignJustify);
 
-    connect(m_pAbouNotepadAction, SIGNAL(triggered()), this, SLOT(AboutNotepad()));
-    connect(m_pAboutQtAction, SIGNAL(triggered()), this, SLOT(AboutQt()));
+    connect(m_pAboutQtAction, &QAction::triggered, this, &EasyWord::AboutQt);
+    connect(m_pAbouNotepadAction, &QAction::triggered, this, &EasyWord::AboutNotepad);
 
     connect(m_pInsertTextAction, &QAction::triggered, this, &EasyWord::InsertFile);
+    connect(m_pInsertTimeAction, &QAction::triggered, this, &EasyWord::InsertTime);
     connect(m_pInsertImageAction, &QAction::triggered, this, &EasyWord::InsertImage);
 
     connect(m_pTextEdit, &QTextEdit::currentCharFormatChanged, this, &EasyWord::ShowCurrentFormatChanged);
+
+    // 方式一
+    //connect(m_pNewAction, SIGNAL(triggered()), this, SLOT(New()));
+    // 方式二
+    //connect(m_pNewAction, &QAction::triggered, this, &EasyWord::New);
+    // 有重载的时候
+    //connect(m_pBtn, static_cast<void (MyButton::*)(bool)>(&MyButton::sigClicked), this, &Widget::onClicked);
+    // 方式三
+    //connect(m_pBtn, QOverload<bool>::of(&MyButton::sigClicked),this,&Widget::onClicked);
+    // 第四种
+    /*
+    connect(m_pBtn, QOverload<bool>::of(&MyButton::sigClicked),
+            [=](bool check){
+                // do something
+
+        });
+     */
+
 }
