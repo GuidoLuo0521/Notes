@@ -99,12 +99,38 @@ void EasyWord::InsertTime()
 
 void EasyWord::ZoomIn()
 {
+    int nIndex = m_pComboxFontSize->currentIndex();
+    if( (nIndex + 1) == m_pComboxFontSize->count())
+        m_pComboxFontSize->setCurrentIndex(m_pComboxFontSize->count() - 1);
+    else
+        m_pComboxFontSize->setCurrentIndex(nIndex + 1 );
 
+    int nFontSize = m_pComboxFontSize->currentText().toInt();
+
+    QTextCursor cursor = m_pTextEdit->textCursor();
+    QTextCharFormat fmt;
+    fmt.setFont(QFont(m_pTextEdit->fontFamily(), nFontSize, QFont::Normal));//参数依次是字体，大小，字体的粗细，以及是否斜体
+    cursor.mergeCharFormat(fmt);
+    cursor.clearSelection();
+    cursor.movePosition(QTextCursor::EndOfLine);//cursor和anchor均移至末尾
 }
 
 void EasyWord::ZoomOut()
 {
+    int nIndex = m_pComboxFontSize->currentIndex();
+    if( nIndex == 0 )
+        m_pComboxFontSize->setCurrentIndex(nIndex);
+    else
+        m_pComboxFontSize->setCurrentIndex(nIndex - 1 );
 
+    int nFontSize = m_pComboxFontSize->currentText().toInt();
+
+    QTextCursor cursor = m_pTextEdit->textCursor();
+    QTextCharFormat fmt;
+    fmt.setFont(QFont(fmt.fontFamily(), nFontSize));//参数依次是字体，大小，字体的粗细，以及是否斜体
+    cursor.mergeCharFormat(fmt);
+    //cursor.clearSelection();
+    cursor.movePosition(QTextCursor::EndOfLine);//cursor和anchor均移至末尾
 }
 
 void EasyWord::Rotate90()
@@ -126,8 +152,8 @@ void EasyWord::Bold()
 {
     QTextCharFormat fmt;
     fmt.setFontWeight( m_pBoldToolButton->isChecked() ? QFont::Bold : QFont::Normal);
-    //m_pTextEdit->mergeCurrentCharFormat(fmt);
-    m_pTextEdit->setFontWeight(m_pBoldToolButton->isChecked() ? QFont::Bold : QFont::Normal);
+    m_pTextEdit->mergeCurrentCharFormat(fmt);
+    //m_pTextEdit->setFontWeight(m_pBoldToolButton->isChecked() ? QFont::Bold : QFont::Normal);
 
     /*
      * 调用QTextCursor的mergeCharFormat()函数把参数format所表示的格式应用到光标所在处的字符上
@@ -190,8 +216,8 @@ void EasyWord::ShowCurrentFormatChanged(const QTextCharFormat &fmt)
     m_pItalicToolButton->setChecked(fmt.fontItalic());
     m_pUnderlineToolButton->setChecked(fmt.fontUnderline());
 
-
-
+    QPalette plt(fmt.foreground().color());
+    m_pLabelFontColor->setPalette(plt);
 }
 
 void EasyWord::AboutNotepad()
@@ -213,6 +239,20 @@ void EasyWord::InsertImage()
 
     QTextCursor cursor = this->m_pTextEdit->textCursor();
     cursor.insertImage(strPath);
+}
+
+void EasyWord::OnChangedFontComboBox(QString str)
+{
+    QTextCharFormat fmt;		 //创建一个QTextCharFormat对象
+    fmt.setFontFamily(str); //选择的字体名称设置给QTextCharFormat对象
+    MergeFormat(fmt);     		 //将新的格式应用到光标选区内的字符
+}
+
+void EasyWord::OnChangedSizeSpinBox(QString str)
+{
+    QTextCharFormat fmt;
+    fmt.setFontPointSize(str.toFloat());
+    m_pTextEdit->mergeCurrentCharFormat(fmt);
 }
 
 void EasyWord::InsertFile()
@@ -258,10 +298,10 @@ void EasyWord::CreateAction()
     m_pPrintAction->setIcon(QIcon(":/Icons/icons/printText.png"));
 
     // 编辑
-    m_pRedoAction = new QAction("撤销(&U)");
-    m_pRedoAction->setToolTip("撤销");
-    m_pRedoAction->setShortcut(QKeySequence::Redo);
-    m_pRedoAction->setIcon(QIcon(":/Icons/icons/redo.png"));
+    m_pUndoAction = new QAction("撤销(&U)");
+    m_pUndoAction->setToolTip("撤销");
+    m_pUndoAction->setShortcut(QKeySequence::Redo);
+    m_pUndoAction->setIcon(QIcon(":/Icons/icons/redo.png"));
 
     m_pCutAction = new QAction("剪切(&T)");
     m_pCutAction->setToolTip("剪切");
@@ -394,7 +434,7 @@ void EasyWord::InitMenuBar()
     // 编辑
     m_pMenuEdit = new QMenu("编辑(&F)");
     //
-    m_pMenuEdit->addAction(m_pRedoAction);
+    m_pMenuEdit->addAction(m_pUndoAction);
     m_pMenuEdit->addSeparator();
     m_pMenuEdit->addAction(m_pCutAction);
     m_pMenuEdit->addAction(m_pCopyAction);
@@ -428,7 +468,7 @@ void EasyWord::InitToolBar()
     this->addToolBar(pToolBarFile);
 
     QToolBar * pToolBarTextEdit = new QToolBar("文字编辑");
-    pToolBarTextEdit->addAction(m_pRedoAction);
+    pToolBarTextEdit->addAction(m_pUndoAction);
     pToolBarTextEdit->addAction(m_pCutAction);
     pToolBarTextEdit->addAction(m_pCopyAction);
     pToolBarTextEdit->addAction(m_pPasteAction);
@@ -524,7 +564,7 @@ void EasyWord::Binding()
 
     connect(m_pCutAction, &QAction::triggered, m_pTextEdit, &QTextEdit::cut);
     connect(m_pCopyAction, &QAction::triggered, m_pTextEdit,&QTextEdit::copy);
-    connect(m_pRedoAction, &QAction::triggered, m_pTextEdit, &QTextEdit::redo);
+    connect(m_pUndoAction, &QAction::triggered, m_pTextEdit, &QTextEdit::undo);
     connect(m_pPasteAction, &QAction::triggered, m_pTextEdit, &QTextEdit::paste);
 
     connect(m_pZoomInAction, &QAction::triggered, this, &EasyWord::ZoomIn);
@@ -552,6 +592,10 @@ void EasyWord::Binding()
 
     connect(m_pTextEdit, &QTextEdit::currentCharFormatChanged, this, &EasyWord::ShowCurrentFormatChanged);
 
+
+    connect(m_pComboBoxFontType,SIGNAL(activated(QString)), this,SLOT(OnChangedFontComboBox(QString)));
+    connect(m_pComboxFontSize,SIGNAL(activated(QString)),   this,SLOT(OnChangedSizeSpinBox(QString)));
+
     // 方式一
     //connect(m_pNewAction, SIGNAL(triggered()), this, SLOT(New()));
     // 方式二
@@ -569,4 +613,14 @@ void EasyWord::Binding()
         });
      */
 
+}
+
+void EasyWord::MergeFormat(QTextCharFormat format)
+{
+    QTextCursor cursor =m_pTextEdit->textCursor();
+    //获得编辑框中的光标
+    if(!cursor.hasSelection())							//(a)
+        cursor.select(QTextCursor::WordUnderCursor);
+    cursor.mergeCharFormat(format);						//(b)
+    m_pTextEdit->mergeCurrentCharFormat(format);	//(c)
 }

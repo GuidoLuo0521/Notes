@@ -40,7 +40,7 @@ private:
     QAction * m_pPrintAction ;
 
     QMenu * m_pMenuEdit;
-    QAction * m_pRedoAction ;
+    QAction * m_pUndoAction ;
     QAction * m_pCutAction ;
     QAction * m_pCopyAction ;
     QAction * m_pPasteAction ;
@@ -113,6 +113,9 @@ public slots:
     void InsertFile();
     void InsertImage();
 
+    void OnChangedFontComboBox(QString str);
+    void OnChangedSizeSpinBox(QString str);
+
 private:
     void CreateAction();
     void CreateMenuWidget();
@@ -121,6 +124,8 @@ private:
     void InitToolBar();
 
     void Binding();
+
+    void MergeFormat(QTextCharFormat);
 
 };
 
