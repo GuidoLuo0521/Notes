@@ -1,5 +1,4 @@
 QT       += core gui
-QT += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,22 +16,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    easyword.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    positiondialog.cpp
 
 HEADERS += \
-    easyword.h \
-    mainwindow.h
+    mainwindow.h \
+    positiondialog.h
 
 FORMS += \
-    easyword.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    positiondialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-RESOURCES += \
-    Resource.qrc

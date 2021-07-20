@@ -114,7 +114,7 @@ public slots:
     void InsertImage();
 
     void OnChangedFontComboBox(QString str);
-    void OnChangedSizeSpinBox(QString str);
+    void OnChangedSizeComboBox(QString str);
 
 private:
     void CreateAction();
@@ -127,6 +127,8 @@ private:
 
     void MergeFormat(QTextCharFormat);
 
+private:
+    QString m_strCurrentFilePath;
 };
 
 #endif // EASYWORD_H

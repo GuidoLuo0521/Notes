@@ -12,11 +12,16 @@
 #include <QFileDialog>
 #include <QFontComboBox>
 #include <QFontDatabase>
+#include <QGraphicsRectItem>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPrinter>
 #include <QTextEdit>
+#include <QTextStream>
 #include <QTime>
 #include <QToolButton>
+
+#include <QPrintDialog>
 
 EasyWord::EasyWord(QMainWindow *parent) :
     QMainWindow(parent),
@@ -29,11 +34,9 @@ EasyWord::EasyWord(QMainWindow *parent) :
     m_pTextEdit = new QTextEdit;
     setCentralWidget(m_pTextEdit);
 
-    QTextDocumentFragment fragment;
-    fragment = QTextDocumentFragment::fromHtml("<img width=80 height=50 "
-                                               "src=':/Icons/icons/delete.png'>");
-    //m_pTextEdit->textCursor().insertFragment(fragment);
-    m_pTextEdit->setFont(QFont("宋体", 20));
+    QTextCharFormat fmt;
+    fmt.setFont(QFont("宋体", 20));
+    MergeFormat(fmt);
 
     CreateAction();
     CreateMenuWidget();
@@ -55,7 +58,21 @@ EasyWord::~EasyWord()
 /// slot
 void EasyWord::New()
 {
+    // 这里可以再判断是否修改过，没修改就不管这个
+    if( m_pTextEdit->toPlainText() != "" )
+    {
+        if( QMessageBox::warning(this, "警告", "是否保存文件?", QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+        {
+            if(m_strCurrentFilePath != "")
+                Save();
+            else
+                SaveAs();
+        }
+    }
 
+    m_strCurrentFilePath = "";
+    m_pTextEdit->clear();
+    this->setWindowTitle("Millet Word");
 }
 void EasyWord::Open()
 {
@@ -64,23 +81,59 @@ void EasyWord::Open()
         return;
 
     QFile file(strOpenPath);
-    if( file.open( QIODevice::ReadWrite ) )
+    if( file.open( QIODevice::ReadOnly ) )
     {
         QString str = file.readAll();
         m_pTextEdit->setText(str);
+
+        m_strCurrentFilePath = strOpenPath;
+
+        QFileInfo fileinfo(file);
+        this->setWindowTitle("Millet Word  --  " + fileinfo.fileName());
     }
 }
 void EasyWord::Save()
 {
+    if(QFile::exists( m_strCurrentFilePath )== false)
+        return;
 
+    QFile file(m_strCurrentFilePath);
+    if( file.open( QIODevice::WriteOnly ) )
+    {
+        QTextStream out(&file);
+        out << m_pTextEdit->toHtml();
+    }
+
+    QMessageBox::information(this, "保存", "已保存");
 }
 void EasyWord::SaveAs()
 {
+    QString strSavePath = QFileDialog::getOpenFileName(this, "另存文件");
+    if(strSavePath == "")
+        return;
 
+    QFile file(strSavePath);
+    if( file.open( QIODevice::WriteOnly ) )
+    {
+        QTextStream out(&file);
+        QString strHtml = m_pTextEdit->toHtml();
+        out << strHtml;
+    }
+
+    QMessageBox::information(this, "另存", "已保存");
 }
 
 void EasyWord::Print()
 {
+    QPrinter printer;
+    QPrintDialog printDialog(&printer, this);
+    if (printDialog.exec() == QDialog::Accepted)
+    {
+        //----获取文本内容
+        QTextDocument *doc = m_pTextEdit->document();
+        // ---打开打印对话窗口
+        doc->print(&printer);
+    }
 
 }
 void EasyWord::Exit()
@@ -105,13 +158,18 @@ void EasyWord::ZoomIn()
     else
         m_pComboxFontSize->setCurrentIndex(nIndex + 1 );
 
-    int nFontSize = m_pComboxFontSize->currentText().toInt();
+    double dFontSize = m_pComboxFontSize->currentText().toDouble();
 
     QTextCursor cursor = m_pTextEdit->textCursor();
-    QTextCharFormat fmt;
-    fmt.setFont(QFont(m_pTextEdit->fontFamily(), nFontSize, QFont::Normal));//参数依次是字体，大小，字体的粗细，以及是否斜体
+    QTextImageFormat fmt = m_pTextEdit->currentCharFormat().toImageFormat();
+    fmt.setWidth(fmt.width() + 5);
+    fmt.setHeight(fmt.height() + 5);
+    fmt.setFontPointSize(dFontSize);
+
     cursor.mergeCharFormat(fmt);
-    cursor.clearSelection();
+    //cursor.mergeCharFormat(fmt);
+    //cursor.clearSelection();
+
     cursor.movePosition(QTextCursor::EndOfLine);//cursor和anchor均移至末尾
 }
 
@@ -123,11 +181,16 @@ void EasyWord::ZoomOut()
     else
         m_pComboxFontSize->setCurrentIndex(nIndex - 1 );
 
-    int nFontSize = m_pComboxFontSize->currentText().toInt();
+    double dFontSize = m_pComboxFontSize->currentText().toDouble();
 
     QTextCursor cursor = m_pTextEdit->textCursor();
-    QTextCharFormat fmt;
-    fmt.setFont(QFont(fmt.fontFamily(), nFontSize));//参数依次是字体，大小，字体的粗细，以及是否斜体
+
+    QTextImageFormat fmt = m_pTextEdit->currentCharFormat().toImageFormat();
+    fmt.setWidth(fmt.width() - 5);
+    fmt.setHeight(fmt.height() - 5);
+    fmt.setFontPointSize(dFontSize);
+
+    //fmt.setFont(QFont(fmt.fontFamily(), ));//参数依次是字体，大小，字体的粗细，以及是否斜体
     cursor.mergeCharFormat(fmt);
     //cursor.clearSelection();
     cursor.movePosition(QTextCursor::EndOfLine);//cursor和anchor均移至末尾
@@ -238,7 +301,13 @@ void EasyWord::InsertImage()
         return;
 
     QTextCursor cursor = this->m_pTextEdit->textCursor();
-    cursor.insertImage(strPath);
+    QTextImageFormat fmt;
+
+    QImage img(strPath);
+    fmt.setWidth(img.width());
+    fmt.setHeight(img.height());
+    cursor.mergeCharFormat(fmt);
+    cursor.insertImage(img);
 }
 
 void EasyWord::OnChangedFontComboBox(QString str)
@@ -248,7 +317,7 @@ void EasyWord::OnChangedFontComboBox(QString str)
     MergeFormat(fmt);     		 //将新的格式应用到光标选区内的字符
 }
 
-void EasyWord::OnChangedSizeSpinBox(QString str)
+void EasyWord::OnChangedSizeComboBox(QString str)
 {
     QTextCharFormat fmt;
     fmt.setFontPointSize(str.toFloat());
@@ -516,7 +585,6 @@ void EasyWord::InitToolBar()
     pToolBarText->addWidget(m_pAlignRightToolButton);
     pToolBarText->addWidget(m_pAlignJustifyToolButton);
 
-
     this->addToolBar(pToolBarText);
 }
 
@@ -594,7 +662,7 @@ void EasyWord::Binding()
 
 
     connect(m_pComboBoxFontType,SIGNAL(activated(QString)), this,SLOT(OnChangedFontComboBox(QString)));
-    connect(m_pComboxFontSize,SIGNAL(activated(QString)),   this,SLOT(OnChangedSizeSpinBox(QString)));
+    connect(m_pComboxFontSize,SIGNAL(activated(QString)),   this,SLOT(OnChangedSizeComboBox(QString)));
 
     // 方式一
     //connect(m_pNewAction, SIGNAL(triggered()), this, SLOT(New()));
