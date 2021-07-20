@@ -16,15 +16,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    basicshape.cpp \
+    basicshapemainwindow.cpp \
     main.cpp \
     mainwindow.cpp \
-    positiondialog.cpp
+    positiondialog.cpp    \
+    paintareawidget.cpp
 
 HEADERS += \
+    basicshape.h \
+    basicshapemainwindow.h \
     mainwindow.h \
-    positiondialog.h
+    positiondialog.h    \
+    paintareawidget.h
 
 FORMS += \
+    basicshape.ui \
+    basicshapemainwindow.ui \
     mainwindow.ui \
     positiondialog.ui
 

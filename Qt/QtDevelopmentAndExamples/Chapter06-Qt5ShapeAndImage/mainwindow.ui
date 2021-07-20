@@ -17,14 +17,27 @@
    <widget class="QPushButton" name="btnPosition">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>10</y>
+      <x>10</x>
+      <y>30</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>显示位置</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnDraw">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>绘图窗口</string>
     </property>
    </widget>
   </widget>

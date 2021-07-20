@@ -21,7 +21,7 @@ public:
 
 private slots:
     void on_btnPosition_clicked();
-
+    void on_btnDraw_clicked();
 private:
     Ui::MainWindow *ui;
 
