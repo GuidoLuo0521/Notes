@@ -52,7 +52,6 @@ void BasicShapeMainWindow::CreateWidgets()
     m_pComboBoxShape->addItem("Arc", PaintAreaWidget::Arc);
     m_pComboBoxShape->addItem("Path", PaintAreaWidget::Path);
     m_pComboBoxShape->addItem("Text", PaintAreaWidget::Text);
-    m_pComboBoxShape->addItem("Pixmap", PaintAreaWidget::Pixmap);
     connect(m_pComboBoxShape, SIGNAL(currentIndexChanged(int)), m_pPaintAreaWidget, SLOT(ChangeShape(int)));
 
     QLabel * pPenColor = new QLabel("画笔颜色：");

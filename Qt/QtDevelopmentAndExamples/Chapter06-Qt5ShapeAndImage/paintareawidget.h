@@ -22,7 +22,8 @@ public:
         Arc,
         Path,
         Text,
-        Pixmap
+        NormalBrush,
+        PixmapBrush
     };
 
 public:
@@ -61,7 +62,6 @@ private:
     void DrawPoints(QPainter &painter);
     void DrawArc(QPainter &painter);
     void DrawText(QPainter &painter);
-
 
 private:
     Shape  m_Shape = Line;

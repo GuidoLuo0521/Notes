@@ -78,7 +78,7 @@ void PaintAreaWidget::ChangeBrushColor(QColor color)
 void PaintAreaWidget::ChangeBrushStyle(Qt::BrushStyle style)
 {
     m_BrushStyle = style;
-    m_vLinesPoint.clear();
+    //m_vLinesPoint.clear();
     update();
 }
 
@@ -146,6 +146,36 @@ void PaintAreaWidget::paintEvent(QPaintEvent *event)
         Pixmap
     };
 */
+    QBrush brush( m_BrushColor);
+    painter.setBrush(brush);
+    if(m_BrushStyle == Qt::TexturePattern)
+        brush.setTexture(QPixmap("cup.bmp"));
+    if(m_BrushStyle == Qt::LinearGradientPattern )
+    {
+        QLinearGradient conicalGradient(0, 0, 400, 400);
+        conicalGradient.setColorAt(0.0, Qt::white);
+        conicalGradient.setColorAt(0.2, Qt::cyan);
+        conicalGradient.setColorAt(1.0, Qt::black);
+        conicalGradient.setSpread(m_Spread);
+        painter.setBrush(conicalGradient);
+    }
+    if(m_BrushStyle == Qt::RadialGradientPattern)
+    {
+        QRadialGradient conicalGradient(200, 200, 150, 150, 100);
+        conicalGradient.setColorAt(0.0, Qt::white);
+        conicalGradient.setColorAt(0.2, Qt::cyan);
+        conicalGradient.setColorAt(1.0, Qt::black);
+        conicalGradient.setSpread(m_Spread);
+        painter.setBrush(conicalGradient);
+    }
+    if(m_BrushStyle == Qt::ConicalGradientPattern)
+    {
+        QConicalGradient conicalGradient(QPointF(350, 190), 60);
+        conicalGradient.setColorAt(0.2, Qt::cyan);
+        conicalGradient.setColorAt(0.9, Qt::black);
+        painter.setBrush(conicalGradient);
+    }
+
 
     if(m_Shape == Shape::Line || m_Shape == Shape::Path)
         DrawLine(painter);
@@ -161,6 +191,7 @@ void PaintAreaWidget::paintEvent(QPaintEvent *event)
         DrawArc(painter);
     if( m_Shape == Shape::Text )
         DrawText(painter);
+
 }
 
 void PaintAreaWidget::UpDateAttribute()
