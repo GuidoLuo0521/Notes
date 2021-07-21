@@ -1,4 +1,4 @@
-#ifndef BASICSHAPEMAINWINDOW_H
+﻿#ifndef BASICSHAPEMAINWINDOW_H
 #define BASICSHAPEMAINWINDOW_H
 
 #include <QMainWindow>
@@ -50,6 +50,8 @@ signals:
     void ChangeSpread(QGradient::Spread spread);
     void ChangeBrushColor(QColor color);
     void ChangeBrushStyle(Qt::BrushStyle style);
+    void ChangeTextFont(QFont font);
+
 
 
 private slots:
@@ -61,6 +63,7 @@ private slots:
     void OnChangedSpread(int gradient);
     void OnChangedBrushColor();
     void OnChangedBrushStyle(int style);
+    void OnChangedTextFont();
 };
 
 #endif // BASICSHAPEMAINWINDOW_H

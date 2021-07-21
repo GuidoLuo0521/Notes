@@ -1,4 +1,4 @@
-#include "basicshapemainwindow.h"
+﻿#include "basicshapemainwindow.h"
 #include "ui_basicshapemainwindow.h"
 
 
@@ -7,6 +7,8 @@
 #include <QPen>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QLineEdit>
+#include <QFontDialog>
 
 
 BasicShapeMainWindow::BasicShapeMainWindow(QWidget *parent) :
@@ -155,6 +157,17 @@ void BasicShapeMainWindow::CreateWidgets()
     connect(m_pComboBoxBrushStyle, SIGNAL(currentIndexChanged(int)), this, SLOT(OnChangedBrushStyle(int)));
     connect(this, SIGNAL(ChangeBrushStyle(Qt::BrushStyle)), m_pPaintAreaWidget, SLOT(ChangeBrushStyle(Qt::BrushStyle)));
 
+    QLabel * pDrawTextLabel = new QLabel("绘制内容：");
+    QLineEdit * pLineEdit = new QLineEdit;
+    connect(pLineEdit, &QLineEdit::textChanged, m_pPaintAreaWidget, &PaintAreaWidget::ChangeDrawText);
+
+    QPushButton * pBtnFont = new QPushButton("字体");
+    connect(pBtnFont, &QPushButton::clicked, this, &BasicShapeMainWindow::OnChangedTextFont);
+
+    QPushButton * pBtnClearScreen = new QPushButton("清屏");
+    connect(pBtnClearScreen, &QPushButton::clicked, m_pPaintAreaWidget, &PaintAreaWidget::ClearScreen);
+    connect(this, SIGNAL(ChangeTextFont(QFont)), m_pPaintAreaWidget, SLOT(ChangeTextFont(QFont)));
+
     int nRow = 0, nColumn = 0;
     pRightLayout->addWidget(pShape, nRow, nColumn++);
     pRightLayout->addWidget(m_pComboBoxShape, nRow, nColumn++);
@@ -197,6 +210,14 @@ void BasicShapeMainWindow::CreateWidgets()
     pRightLayout->addWidget(pBrushStyle, nRow, nColumn++);
     pRightLayout->addWidget(m_pComboBoxBrushStyle, nRow, nColumn++);
 
+    ++nRow; nColumn = 0;
+    pRightLayout->addWidget(pDrawTextLabel, nRow, nColumn++);
+    pRightLayout->addWidget(pLineEdit, nRow, nColumn++);
+    pRightLayout->addWidget(pBtnFont, nRow, nColumn++);
+
+    ++nRow; nColumn = 0;
+    pRightLayout->addWidget(pBtnClearScreen, nRow, 2);
+
     pMainLayout->addWidget(m_pPaintAreaWidget);
     pMainLayout->addLayout(pRightLayout);
     pMainLayout->setStretchFactor(m_pPaintAreaWidget, 1);
@@ -226,12 +247,47 @@ void BasicShapeMainWindow::OnChangedPenStyle(int style)
 
 void BasicShapeMainWindow::OnChangedPenCapStyle(int style)
 {
-    emit ChangePenCapStyle((Qt::PenCapStyle)style);
+/*
+    enum PenCapStyle { // line endcap style
+        FlatCap = 0x00,
+        SquareCap = 0x10,
+        RoundCap = 0x20,
+        MPenCapStyle = 0x30
+    };
+*/
+    Qt::PenCapStyle penstyle = Qt::FlatCap;
+    switch (style) {
+    case 0: penstyle = Qt::FlatCap; break;
+    case 1: penstyle = Qt::SquareCap; break;
+    case 2: penstyle = Qt::RoundCap; break;
+    case 3: penstyle = Qt::MPenCapStyle; break;
+    }
+
+    // 1 << (style+16)
+    emit ChangePenCapStyle(penstyle);
 }
 
 void BasicShapeMainWindow::OnChangedPenJoinStyle(int style)
 {
-    emit ChangePenJoinStyle((Qt::PenJoinStyle)style);
+/*
+    enum PenJoinStyle { // line join style
+        MiterJoin = 0x00,
+        BevelJoin = 0x40,
+        RoundJoin = 0x80,
+        SvgMiterJoin = 0x100,
+        MPenJoinStyle = 0x1c0
+    };
+*/
+
+    Qt::PenJoinStyle joinstyle = Qt::PenJoinStyle::BevelJoin;
+    switch (style) {
+    case 0: joinstyle = Qt::MiterJoin; break;
+    case 1: joinstyle = Qt::BevelJoin; break;
+    case 2: joinstyle = Qt::RoundJoin; break;
+    case 3: joinstyle = Qt::SvgMiterJoin; break;
+    case 4: joinstyle = Qt::MPenJoinStyle; break;
+    }
+    emit ChangePenJoinStyle(joinstyle);
 }
 
 void BasicShapeMainWindow::OnChangedFillRule(int rule)
@@ -261,3 +317,12 @@ void BasicShapeMainWindow::OnChangedBrushStyle(int style)
 {
     emit ChangeBrushStyle((Qt::BrushStyle)style);
 }
+
+void BasicShapeMainWindow::OnChangedTextFont()
+{
+    bool ok = true;
+    QFont font = QFontDialog::getFont(&ok);
+
+    emit ChangeTextFont(font);
+}
+

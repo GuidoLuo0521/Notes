@@ -1,6 +1,8 @@
-#ifndef PAINTAREAWIDGET_H
+﻿#ifndef PAINTAREAWIDGET_H
 #define PAINTAREAWIDGET_H
 
+#include <QMouseEvent>
+#include <QPainter>
 #include <QWidget>
 
 
@@ -39,6 +41,27 @@ public slots:
     void ChangeSpread(QGradient::Spread gradient);
     void ChangeBrushColor(QColor color);
     void ChangeBrushStyle(Qt::BrushStyle style);
+    void ChangeDrawText(QString text);
+    void ChangeTextFont(QFont font);
+
+    void ClearScreen();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    void UpDateAttribute();
+    void DrawLine(QPainter &painter);
+    void DrawRectangle(QPainter &painter);
+    void DrawPolygon(QPainter &painter);
+    void DrawPolyline(QPainter &painter);
+    void DrawPoints(QPainter &painter);
+    void DrawArc(QPainter &painter);
+    void DrawText(QPainter &painter);
+
 
 private:
     Shape  m_Shape = Line;
@@ -51,6 +74,16 @@ private:
     QGradient::Spread  m_Spread = QGradient::Spread::PadSpread;
     QColor  m_BrushColor = Qt::GlobalColor::black;
     Qt::BrushStyle  m_BrushStyle = Qt::BrushStyle::SolidPattern;
+
+    QVector<QPoint> m_vLinesPoint;
+    QString m_strAttribute;
+    QPointF m_CurrentPoint, m_LastPoint;
+    bool  m_bMousePressing;
+
+    QString m_strText;
+    QFont m_Font;
+
+
 
 };
 
