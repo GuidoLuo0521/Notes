@@ -146,7 +146,7 @@ void PaintAreaWidget::paintEvent(QPaintEvent *event)
         Pixmap
     };
 */
-    QBrush brush( m_BrushColor);
+    QBrush brush( m_BrushColor, m_BrushStyle);
     painter.setBrush(brush);
     if(m_BrushStyle == Qt::TexturePattern)
         brush.setTexture(QPixmap("cup.bmp"));
