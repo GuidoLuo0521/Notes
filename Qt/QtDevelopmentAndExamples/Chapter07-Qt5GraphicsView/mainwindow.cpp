@@ -113,15 +113,18 @@ void MainWindow::CreateAction()
     // tool
     m_pToolsShapeSelect = new QAction("&Select", this);
     m_pToolsShapeSelect->setIcon(QIcon(":icons/arrow.png"));
+    m_pToolsShapeSelect->setCheckable(true);
     connect(m_pToolsShapeSelect, SIGNAL(triggered()), this, SLOT(AddShape()));
 
         // shape
         m_pToolsShapeLine = new QAction("&Line", this);
         m_pToolsShapeLine->setIcon(QIcon(":icons/line.png"));
+        m_pToolsShapeLine->setCheckable(true);
         connect(m_pToolsShapeLine, SIGNAL(triggered()), this, SLOT(AddShape()));
 
         m_pToolsShapeRect = new QAction("&Rect", this);
         m_pToolsShapeRect->setIcon(QIcon(":icons/rectangle.png"));
+        m_pToolsShapeRect->setCheckable(true);
         // 根据发送者去判定需要添加什么类型的图形
         connect(m_pToolsShapeRect, SIGNAL(triggered()), this, SLOT(AddShape()));
 
@@ -380,34 +383,67 @@ void MainWindow::PositionChanged(const int x, const int y)
 
 void MainWindow::AddShape()
 {
+    m_pToolsShapeSelect->setChecked(false);
+    m_pToolsShapeLine->setChecked(false);
+    m_pToolsShapeRect->setChecked(false);
+    m_pToolsShapeRoundRect->setChecked(false);
+    m_pToolsShapeEllipse->setChecked(false);
+    m_pToolsShapePolygon->setChecked(false);
+    m_pToolsShapePolyline->setChecked(false);
+    m_pToolsShapeBezier->setChecked(false);
+    m_pToolsShapeRotate->setChecked(false);
+
     if ( sender() == m_pToolsShapeSelect )
+    {
+        m_pToolsShapeSelect->setChecked(true);
         DrawTool::c_drawShape = DS_Selection;
+    }
     else if (sender() == m_pToolsShapeLine )
+    {
+        m_pToolsShapeLine->setChecked(true);
         DrawTool::c_drawShape = DS_Line;
+    }
     else if ( sender() == m_pToolsShapeRect )
+    {
+        m_pToolsShapeRect->setChecked(true);
         DrawTool::c_drawShape = DS_Rectangle;
+    }
     else if ( sender() == m_pToolsShapeRoundRect )
+    {
+        m_pToolsShapeRoundRect->setChecked(true);
         DrawTool::c_drawShape = DS_Roundrect;
+    }
     else if ( sender() == m_pToolsShapeEllipse )
+    {
+        m_pToolsShapeEllipse->setChecked(true);
         DrawTool::c_drawShape = DS_Ellipse ;
+    }
     else if ( sender() == m_pToolsShapePolygon )
+    {
+        m_pToolsShapePolygon->setChecked(true);
         DrawTool::c_drawShape = DS_Polygon;
+    }
     else if (sender() == m_pToolsShapePolyline )
+    {
+        m_pToolsShapePolyline->setChecked(true);
         DrawTool::c_drawShape = DS_Polyline;
+    }
     else if ( sender() == m_pToolsShapeBezier )
+    {
+        m_pToolsShapeBezier->setChecked(true);
         DrawTool::c_drawShape = DS_Bezier ;
+    }
     else if (sender() == m_pToolsShapeRotate )
+    {
+        m_pToolsShapeRotate->setChecked(true);
         DrawTool::c_drawShape = DS_Rotation;
+    }
 
     // 非选中和旋转的情况下，清除选中的状态
     if ( sender() != m_pToolsShapeSelect &&
         sender() != m_pToolsShapeRotate )
     {
         m_pView->scene()->clearSelection();
-    }
-    if(sender() == m_pToolsShapeSelect)
-    {
-        //setCursor(m_pView->scene(), Qt::ArrowCursor);
     }
 }
 
