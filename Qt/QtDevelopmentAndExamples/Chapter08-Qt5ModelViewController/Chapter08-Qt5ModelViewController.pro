@@ -17,15 +17,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     dirmodeex.cpp \
+    histogramform.cpp \
+    histogramview.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     dirmodeex.h \
+    histogramform.h \
+    histogramview.h \
     mainwindow.h
 
 FORMS += \
     dirmodeex.ui \
+    histogramform.ui \
     mainwindow.ui
 
 # Default rules for deployment.
