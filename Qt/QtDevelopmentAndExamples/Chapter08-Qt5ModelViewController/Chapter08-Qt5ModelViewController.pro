@@ -16,6 +16,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    comboxdelegate.cpp \
+    datedelegate.cpp \
+    delegateview.cpp \
     dirmodeex.cpp \
     histogramform.cpp \
     histogramview.cpp \
@@ -23,12 +26,16 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    comboxdelegate.h \
+    datedelegate.h \
+    delegateview.h \
     dirmodeex.h \
     histogramform.h \
     histogramview.h \
     mainwindow.h
 
 FORMS += \
+    delegateview.ui \
     dirmodeex.ui \
     histogramform.ui \
     mainwindow.ui

@@ -1,4 +1,4 @@
-#include "histogramform.h"
+﻿#include "histogramform.h"
 #include "histogramview.h"
 #include "ui_histogramform.h"
 
@@ -55,7 +55,6 @@ void HistogramForm::SetupView()
     QItemSelectionModel * pSelectionModel = new QItemSelectionModel(m_pStandardItemModel);
     m_pTableView->setSelectionModel(pSelectionModel);
     pHistogramView->setSelectionModel(pSelectionModel);
-
 
 
     //connect(pSelectionModel, &QItemSelectionModel::selectionChanged, m_pTableView, &QTableView::selectionChanged);
