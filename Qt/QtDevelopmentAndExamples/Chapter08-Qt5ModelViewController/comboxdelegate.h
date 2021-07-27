@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QItemDelegate>
 #include <QComboBox>
+#include <QStyledItemDelegate>
 
-
-class ComboxDelegate : public QItemDelegate
+class ComboxDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 

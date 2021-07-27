@@ -6,7 +6,8 @@ SUBDIRS += \
     Chapter05-Qt5MainWindow \
     Chapter06-Qt5ShapeAndImage\
 	Chapter07-Qt5GraphicsView \
-    Chapter08-Qt5ModelViewController
+    Chapter08-Qt5ModelViewController \
+    Chapter09-Qt5FileAndDisk
 
 
 
