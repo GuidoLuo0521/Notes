@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;ClassAdpterDebug;ObjectAdperDebug;CompositeSafe</Configurations>
+    <ApplicationIcon />
+    <StartupObject />
   </PropertyGroup>
 
 </Project>
