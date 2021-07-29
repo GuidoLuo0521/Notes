@@ -42,7 +42,7 @@ void MainWindow::OnReceived()
         datagram.resize(m_pUdpSocket->pendingDatagramSize());
         m_pUdpSocket->readDatagram(datagram.data(), datagram.size());
 
-        QString str = datagram.data();
-        ui->textEdit->append(str.toLocal8Bit().data());
+        QString str = QString::fromUtf8(datagram.data());
+        ui->textEdit->append(str);
     }
 }

@@ -10,8 +10,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("UDP Server");
 
     m_pUdpSocket = new QUdpSocket(this);
-
-
 }
 
 MainWindow::~MainWindow()
@@ -25,10 +23,15 @@ void MainWindow::on_btnSendPause_clicked()
     QString str = ui->textEdit->toPlainText();
     if( str != "")
     {
-        m_pUdpSocket->writeDatagram(
-            str.toUtf8(),
-            str.count(),
-            QHostAddress::Broadcast, m_nPort);
+        QByteArray datagram = str.toUtf8().data();
+
+        bool bRet = m_pUdpSocket->writeDatagram(
+            datagram,
+            datagram.size(),
+            QHostAddress::Broadcast, m_nPort) == datagram.size();
+        if(bRet)
+            qDebug() << "发送成功" ;
+
     }
 }
 
