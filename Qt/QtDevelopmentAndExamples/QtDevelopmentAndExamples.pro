@@ -8,7 +8,7 @@ SUBDIRS += \
 	Chapter07-Qt5GraphicsView \
     Chapter08-Qt5ModelViewController \
     Chapter09-Qt5FileAndDisk \
-    Chapter10-Qt5NetworkAndCommunication
+    Chapter10-Qt5NetworkAndCommunication \
 
 
 
