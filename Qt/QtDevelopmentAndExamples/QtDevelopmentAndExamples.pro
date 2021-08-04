@@ -10,7 +10,8 @@ SUBDIRS += \
     Chapter09-Qt5FileAndDisk \
     Chapter10-Qt5NetworkAndCommunication \
     Chapter11-Qt5EventProcess \
-    Chapter12-Qt5MultiThread
+    Chapter12-Qt5MultiThread \
+    Chapter13-Qt5Database
 
 
 
