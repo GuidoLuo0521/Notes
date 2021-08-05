@@ -6,12 +6,16 @@
 #include <QDebug>
 #include <QSqlError>
 
+#include <QSqlTableModel>
+#include <QTableView>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     //MainWindow w;
     //w.show();
 
+    /*
     //添加数据库驱动
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     //设置数据库名称
@@ -46,6 +50,35 @@ int main(int argc, char *argv[])
         qDebug() << value0 << value1 ;
     }
 
-    return a.exec();
+    db.close();
+    //QSqlDatabase::removeDatabase(":memory:");
+    QString name;
+    {
+        name = QSqlDatabase::database().connectionName();
+    }//超出作用域，隐含对象QSqlDatabase::database()被删除。
+    QSqlDatabase::removeDatabase(name);
 
+    */
+
+    QSqlDatabase staticecgdb = QSqlDatabase::addDatabase("QMYSQL");
+    staticecgdb.setHostName("");
+    staticecgdb.setPort(3306);
+    staticecgdb.setDatabaseName("testdatabase");
+    staticecgdb.setUserName("root");
+    staticecgdb.setPassword("");
+
+    if(staticecgdb.open())
+    {
+        QSqlTableModel *model = new QSqlTableModel( nullptr, staticecgdb);
+        model->setTable("center");
+        model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+        model->select();
+        model->setHeaderData(0, Qt::Horizontal, "Id");
+        model->setHeaderData(1, Qt::Horizontal, "Name");
+        QTableView *view = new QTableView;
+        view->setModel(model);
+        view->show();
+    }
+
+    return a.exec();
 }
