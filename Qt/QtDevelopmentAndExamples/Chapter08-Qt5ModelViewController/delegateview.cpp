@@ -45,10 +45,14 @@ DelegateView::DelegateView(QWidget *parent) :
 
     this->menuBar()->addMenu(pFileMenu);
 
-    QItemSelectionModel * pSelectionModel = new QItemSelectionModel(m_pStandardItemModel);
+    QItemSelectionModel * pSelectionModel =
+            new QItemSelectionModel(m_pStandardItemModel);
     pTableView->setSelectionModel(pSelectionModel);
 
-    connect(pSelectionModel, SIGNAL(selectionChanged(QItemSelection, QItemSelection)), pTableView, SLOT(selectionChanged(QItemSelection, QItemSelection)));
+    connect(pSelectionModel,
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+            pTableView,
+            SLOT(selectionChanged(QItemSelection, QItemSelection)));
 
     this->setCentralWidget(pTableView);
 }
