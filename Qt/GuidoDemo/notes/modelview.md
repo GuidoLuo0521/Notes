@@ -259,6 +259,151 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 
 在第一行一列（0,0）的位置，增加一个显示时间的东西
 
+~~~c++
+// .h
+private slots:
+    void timerHit();
+
+private:
+    QTimer* timer;
+
+// cpp
+MyModel::MyModel(QObject *parent)
+    : QAbstractTableModel(parent)
+    , timer(new QTimer(this))
+{
+    timer->setInterval(1000);
+    connect(timer, &QTimer::timeout , this, &MyModel::timerHit);
+    timer->start();
+}
+
+QVariant MyModel::data(const QModelIndex &index, int role) const
+{
+    int row = index.row();
+    int col = index.column();
+
+    if (role == Qt::DisplayRole && row == 0 && col == 0)
+        return QTime::currentTime().toString();
+
+    return QVariant();
+}
+
+void MyModel::timerHit()
+{
+    //we identify the top left cell
+    QModelIndex topLeft = createIndex(0,0);
+    //emit a signal to make the view reread identified data
+    emit dataChanged(topLeft, topLeft, {Qt::DisplayRole});
+}
+~~~
+
+
+
+### Setting up Headers for Columns and Rows
+
+通过重新实现  `headerDate()` 方法，来改变 header 中的内容，
+
+(file source: examples/widgets/tutorials/modelview/4[_headers](https://doc.qt.io/qt-5/qmake-variable-reference.html#headers)/mymodel.cpp)
+
+~~~c++
+// 参数内容和 data() 接口的差不多
+
+QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        switch (section) {
+        case 0:
+            return QString("first");
+        case 1:
+            return QString("second");
+        case 2:
+            return QString("third");
+        }
+    }
+    return QVariant();
+}
+~~~
+
+
+
+### The Minimal Editing Example
+
+通过实现下面两个虚函数 ，一个记录值，另一个记录每个 cell 的属性，标记
+
+~~~c++
+	bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+~~~
+
+`(file source: examples/widgets/tutorials/modelview/5_edit/mymodel.h)`
+
+~~~c++
+// mymodel.h
+#include <QAbstractTableModel>
+#include <QString>
+
+const int COLS= 3;
+const int ROWS= 2;
+
+class MyModel : public QAbstractTableModel
+{
+    Q_OBJECT
+public:
+    MyModel(QObject *parent = nullptr);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+private:
+    QString m_gridData[ROWS][COLS];  //holds text entered into QTableView
+signals:
+    void editCompleted(const QString &);
+};
+~~~
+
+`(file source: examples/widgets/tutorials/modelview/5_edit/mymodel.cpp)`
+
+~~~c++
+bool MyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (role == Qt::EditRole) {
+        if (!checkIndex(index))
+            return false;
+        //save value from editor to member m_gridData
+        m_gridData[index.row()][index.column()] = value.toString();
+        //for presentation purposes only: build and emit a joined string
+        QString result;
+        for (int row = 0; row < ROWS; row++) {
+            for (int col= 0; col < COLS; col++)
+                result += m_gridData[row][col] + ' ';
+        }
+        emit editCompleted(result);
+        return true;
+    }
+    return false;
+}
+~~~
+
+
+
+setData()，每次在用户编辑单元格的时候都会调用
+
+> The `index` parameter tells us which field has been edited and `value` provides the result of the editing process. 
+>
+>  The role will always be set to [Qt::EditRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum) because our cells only contain text
+>
+>  If a checkbox were present and user permissions are set to allow the checkbox to be selected, calls would also be made with the role set to [Qt::CheckStateRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum).
+
+~~~c++
+Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
+{
+    return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
+}
+~~~
+
+
+
 
 
 
@@ -272,7 +417,3 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 [Model/View Programming](https://doc.qt.io/qt-5/model-view-programming.html)
 
 
-
-
-
-[重定向]()
