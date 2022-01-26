@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS += RasterWindowDemo/RasterWindowDemo.pro
+SUBDIRS += RasterWindowDemo/RasterWindowDemo.pro \
+    ModelViewDemo
