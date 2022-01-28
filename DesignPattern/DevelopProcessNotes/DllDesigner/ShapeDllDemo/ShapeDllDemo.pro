@@ -1,7 +1,7 @@
 QT -= gui
 
 TEMPLATE = lib
-DEFINES += DLLDEMO_LIBRARY
+DEFINES += SHAPEDLLDEMO_LIBRARY
 
 CONFIG += c++11
 
@@ -17,18 +17,37 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    abstractdlldemo.cpp \
-    dlldemo.cpp
+    Color/bluecolor.cpp \
+    Color/greencolor.cpp \
+    Color/redcolor.cpp \
+    Color/yellowcolor.cpp \
+    Color/icolorinterface.cpp \
+    EntityShape/entityshape.cpp \
+    EntityShape/ientityshape.cpp \
+    Shape/circleshape.cpp \
+    Shape/rectshape.cpp \
+    Shape/triangleshape.cpp \
+    Shape/ishapeinterface.cpp \
+    shapedlldemo.cpp
 
 HEADERS += \
-    DllDemo_global.h \
-    IInterfaceDemo.h \
-    abstractdlldemo.h \
-    dlldemo.h
+    Color/bluecolor.h \
+    Color/greencolor.h \
+    Color/redcolor.h \
+    Color/yellowcolor.h \
+    Color/icolorinterface.h \
+    EntityShape/entityshape.h \
+    EntityShape/ientityshape.h \
+    Shape/circleshape.h \
+    Shape/rectshape.h \
+    Shape/triangleshape.h \
+    Shape/ishapeinterface.h \
+    ShapeDllDemo_global.h \
+    globalDefine.h \
+    shapedlldemo.h
 
 # Default rules for deployment.
 unix {
     target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
-

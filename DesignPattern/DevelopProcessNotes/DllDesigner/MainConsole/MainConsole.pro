@@ -24,9 +24,19 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/release/ -lDllDemo
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug/ -lDllDemo
-else:unix: LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/ -lDllDemo
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/release/ -lDllDemo
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug/ -lDllDemo
+#else:unix: LIBS += -L$$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/ -lDllDemo
+#
+#INCLUDEPATH += $$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug
+#DEPENDPATH += $$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug
 
-INCLUDEPATH += $$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug
-DEPENDPATH += $$PWD/../../../../../../people/guido/Solution/Qt/GuidoDemo/build-GuidoDemo-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/DllDesigner/DllDemo/debug
+
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/release/ -lShapeDllDemo
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/debug/ -lShapeDllDemo
+else:unix: LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/ -lShapeDllDemo
+
+INCLUDEPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/debug
+DEPENDPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/debug

@@ -306,9 +306,98 @@ int main(int argc, char *argv[])
   * `PIMPL` 也可实现跨平台的使用
   * 抽象接口也可跨平台方便
 
+
+
+* ### 倾向性
+
+  * <font color=red>`PIMLP`倾向于表述类和类之前编译的耦合性 </font>
+
+  * <font color=red>桥接模式，倾向于功能维度上的变化</font>
+
+    > 可参考    ----   [桥接模式](https://www.runoob.com/w3cnote/bridge-pattern2.html)
+
+
+
+
 #### 相同
 
 其实思想应该都是差不多的，就是将实现用另外的类来实现，达到封装的目的
+
+
+
+
+
+# 再谈桥接和`PIMPL`模式
+
+## 功能
+
+桥接模式更多侧重与对于功能的扩展和组合，如类与类之间的关系，泛化，实现，观念，聚合，组合，依赖
+
+桥接模式可能更多的是一种组合的关系
+
+<font size=9>**几个类的功能组合成一种新的类，而非每个类去实现所有功能**</font>
+
+## 例子
+
+拿下面的参考中的例子说明，绘图（S）和上色（C）
+
+要绘制图形：长方形，正方形，圆形，
+
+要上色颜色：红色，绿色，黄色
+
+那么目前就有两种实现的方案
+
+* 所有图形，每个图形都绘制一个颜色那么就是  `3S * 3C ` = 9
+
+  ![image-20220128135312491](README.assets/image-20220128135312491.png)
+
+* 图形和颜色进行组合 `3S + 3C` = 6
+
+  ![image-20220128135326947](README.assets/image-20220128135326947.png)
+
+
+
+### 扩展
+
+如果这时候，我要增加图形n个和颜色m个，那么两种设计方案的优劣性就显示出来了
+
+#### 第一种 全部都绘制
+
+> 所有图形，每个图形都绘制一个颜色那么就是  `3S * 3C ` = 9
+
+那么就是 (3 + n) * (3+m) 个图形绘制方式，而且还需要去更改已经写好的类，这是不理智，而且不符合设计规范的，写好的类最好不要去碰他
+
+#### 第二种，组合方式
+
+> 图形和颜色进行组合 `3S + 3C` = 6
+
+我只需要再添加图形和颜色就可以了，原来的工程可以不用动，类多继承一个就可以了
+
+![image-20220128140046844](README.assets/image-20220128140046844.png)
+
+
+
+## 总结
+
+桥接模式，是维度上的增加，靠的就是一个组装来节省扩展和修改的成本
+
+某物的实现（“主体”）通过间接级别（“句柄”）与其接口分离。客户端代码对句柄进行操作，然后对主体进行操作
+
+可看 【`ShapeDllDemo`】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -316,141 +405,6 @@ int main(int argc, char *argv[])
 
 ## [桥接模式（别名Handle/Body）、与接口、抽象接口](https://blog.csdn.net/yockie/article/details/52628842)
 
-在C++中封装的概念是把一个对象的外观接口同实际工作方式（实现）分离开来，但是C++的封装是不完全的，编译器必须知道一个对象的所有部分的声明，以便创建和管理它。我们可以想象一种只需声明一个对象的公共接口部分的编程语言，而将私有的实现部分隐藏起来。C + +在编译期间要尽可能多地做静态类型检查。这意味着尽早捕获错误，也意味着程序具有更高的效率。然而这对私有的实现部分来说带来两个影响：一是即使程序员不能轻易地访问实现部分，但他可以看到它；二是造成一些不必要的重复编译。
+## [桥接模式 - W3](https://www.runoob.com/w3cnote/bridge-pattern2.html)
 
- 然而C++并没有将这个原则应用到二进制层次上，这是因为C++的类既是描述了一个接口同时也描述了实现的过程,示例如下：
-
-```c++
-class CMyString
-    {
-    private:
-        const int m_cch;
-        char *m_psz;
-    public:
-        CMyString(const char *psz);
-        ~CMyString();
-        int Length() const;
-        int Index(const char *psz) const;
-    }
-```
-
-`CMyStirng`对外过多的暴露了内存布局实现的细节，这些信息过度的依赖于这些成员变量的大小和顺序，从而导致了客户过度依赖于可执行代码之间的二进制耦合关系，这样的接口不利于跨语言跨平台的软件开发和移植。
-
- 
-
-###  **Handle-Body** 模式
-
-解决这个问题的技术叫句柄类（ handle classes）。有关实现的任何东西都消失了，只剩一个单一的指针“**m_pThis**”。该指针指向一个结构，该结构的定义与其所有的成员函数的定义一样出现在实现文件中。这样，只要接口部分不改变，头文件就不需变动。而实现部分可以按需要任意更动，完成后只要对实现文件进行重新编译，然后再连接到项目中。
-
-  这里有这项技术的简单例子。头文件中只包含公共的接口和一个简单的没有完全指定的类指针。
-
-```c++
-class CMyStringHandle
-    {
-    private:
-        class CMyString；
-        CMyString *m_pThis;
-    public:
-        CMyStringHandle (const char *psz);
-        ~ CMyStringHandle ();
-        int Length() const;
-        int Index(const char *psz) const;
-    }；
-    CMyStringHandle:: CMyStringHandle(const char *psz)
-    :m_pThis(new CMyString(psz));
-    {
-    }
-    CMyStringHandle::~ CMyStringHandle()
-    {
-         delete m_pThis;
-    }
-    int CMyStringHandle::Length()
-    {
-        return m_pThis->Length();
-    }
-    int CMyStringHandle::Index(const char *psz)
-    {
-     return m_pThis->Index(psz);
-    }
-```
-
-
-
-这是所有客户程序员都能看到的。这行
-
-`   class CMyString;`
-
-是一个没有完全指定的类型说明或类声明（一个类的定义包含类的主体）。它告诉编译器，`cheshire` 是一个结构的名字，但没有提供有关该结构的任何东西。这对产生一个指向结构的指针来说已经足够了。但我们在提供一个结构的主体部分之前不能创建一个对象。在这种技术里，包含具体实现的结构主体被隐藏在实现文件中。
-
-在设计模式中，这就叫做Handle-Body 模式，**Handle-Body**只含有一个实体指针，服务的数据成员永远被封闭在服务系统中。
-
-Handle-Body模式如下：
-
-![img](https://pic002.cnblogs.com/images/2011/315247/2011082111131417.png)
-
-**Handle-Body**的布局结构永远不会随着实现类数据成员的加入或者删除或者修改而导致**Handle-Body**的修改，即**Handle-Body**协议不依赖于C++实现类的任何细节。这就有效的对用户的编译器隐藏了这些斜街，用户在使用对这项技术时候，**Handle-Body** 接口成了它唯一的入口。
-
-然而**Handle-Body**模式也有自己的弱点：
-
-1、接口类必须把每一个方法调用显示的传递给实现类，这在一个只有一个构造和一个析构的类来说显然不构成负担，但是如果一个庞大的类库，它有上百上千个方法时候，光是编写这些方法传递就有可能非常冗长，这也增加了出错的可能性。
-
-2、对于关注于性能的应用每一个方法都得有两层的函数调用，嵌套的开销也不理想
-
-3、由于句柄的存在依然存在编译连接器兼容性问题。
-
-接口和实现分离的Handle-Body。
-
-### **抽象接口**
-
-使用了“接口与实现的分离”技术的 **Handle-Body** 解决了编译器/链接器的大部分问题，而C++面向对象编程中的抽象接口同样是运用了“接口与实现分离”的思想，而采用抽象接口对于解决这
-
-类问题是一个极其完美的解决方案。
-
-1、抽象接口的语言描述：
-
-```c++
-class IMyString
-{
-    virtual int Length() const = 0;  //这表示是一个纯虚函数，具有纯虚函数的接口
-    virtual int Index(const char *psz) const = 0;
-}；
-```
-
-2.抽象接口的内存结构
-
-![img](https://pic002.cnblogs.com/images/2011/315247/2011082111194018.png)
-
-3.抽象接口的实现代码：
-
-```c++
-//接口：
-class IMyString
-{
-            virtual int Length() const = 0;  //这表示是一个纯虚函数，具有纯虚函数的接口
-            virtual int Index(const char *psz) const = 0;
-}；
-
-//实现：
-class CMyString：public IMyString
-    {
-    private:
-        const int m_cch;
-        char *m_psz;
-    public:
-        CMyString(const char *psz);
-        virtual ~CMyString();
-        int Length() const;
-        int Index(const char *psz) const;
-    }
-```
-
-从上面采用抽象接口的实例来看，抽象接口解决了Handle-Body所遗留下来的全部缺陷。
-
-抽象接口的一个典型应用：
-
-抽象工厂（`AbstractFactroy`）
-
-
-
-![img](https://pic002.cnblogs.com/images/2011/315247/2011082111224261.png)
-
+## [HandleBodyPattern](https://wiki.c2.com/?HandleBodyPattern)

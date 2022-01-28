@@ -25,4 +25,11 @@ DllDemo::~DllDemo()
 void DllDemo::print()
 {
     qDebug() << __FILE__ << __FUNCTION__;
+
+    shape();
+}
+
+void DllDemo::shape()
+{
+    qDebug() << __FILE__ << __FUNCTION__;
 }
