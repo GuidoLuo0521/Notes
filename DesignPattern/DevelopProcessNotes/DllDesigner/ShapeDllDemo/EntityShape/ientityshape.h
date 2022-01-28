@@ -1,8 +1,8 @@
 #ifndef IENTITYSHAPE_H
 #define IENTITYSHAPE_H
 
-#include "ShapeDllDemo_global.h"
-#include "globalDefine.h"
+#include "../ShapeDllDemo_global.h"
+#include "../globalDefine.h"
 
 class SHAPEDLLDEMO_EXPORT IEntityShape
 {

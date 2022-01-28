@@ -4,7 +4,7 @@
 
 # `UML`
 
-![image-20220127211041446](README-images/image-20220127211041446.png)
+![image-20220127211041446](README.assets/image-20220127211041446.png)
 
 大概类似这样，对外暴露的就是【基类】，真正实现的就是【实体类】
 
@@ -17,11 +17,11 @@
 * 一个 `dll`工程，叫`DllDemo`
 * 一个调用 `dll`的工程叫`MainConsole`
 
-![image-20220127211304481](README-images/image-20220127211304481.png)
+![image-20220127211304481](README.assets/image-20220127211304481.png)
 
 ## `DllDemo`工程
 
-![image-20220127211724032](README-images/image-20220127211724032.png)
+![image-20220127211724032](README.assets/image-20220127211724032.png)
 
 ~~~c++
 //dlldemo.h
@@ -83,7 +83,7 @@ private:
 
 所以现在的程序结构
 
-![image-20220127213537446](README-images/image-20220127213537446.png)
+![image-20220127213537446](README.assets/image-20220127213537446.png)
 
 类
 
@@ -166,11 +166,11 @@ void DllDemo::print()
 
 ## `MainConsole ` 工程
 
-![image-20220127215658028](README-images/image-20220127215658028.png)
+![image-20220127215658028](README.assets/image-20220127215658028.png)
 
 `pro` 文件肯定要添加引用咯，我是直接添加的，因为做测试，没有把 `dll` 和 `.h` 输出和复制到对应的路径下面去
 
-![image-20220127215719547](README-images/image-20220127215719547.png)
+![image-20220127215719547](README.assets/image-20220127215719547.png)
 
 代码
 
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 
 输出结果
 
-![image-20220127215545682](README-images/image-20220127215545682.png)
+![image-20220127215545682](README.assets/image-20220127215545682.png)
 
 
 
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 
 ### [`PIMPL`](https://github.com/GuidoLuo0521/Blog/blob/master/%E7%BC%96%E7%A8%8B/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/PIMPL.md)
 
-![image-20220127220743676](README-images/image-20220127220743676.png)
+![image-20220127220743676](README.assets/image-20220127220743676.png)
 
 《effective C++》 条款31：将文件间的编译关系降至最低
 

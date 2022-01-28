@@ -40,3 +40,10 @@ else:unix: LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64
 
 INCLUDEPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/debug
 DEPENDPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug/ShapeDllDemo/debug
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/ShapeDllDemo/release/ -lShapeDllDemo
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/ShapeDllDemo/debug/ -lShapeDllDemo
+else:unix: LIBS += -L$$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/ShapeDllDemo/ -lShapeDllDemo
+
+INCLUDEPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/ShapeDllDemo/debug
+DEPENDPATH += $$PWD/../../build-DllDesigner-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/ShapeDllDemo/debug
