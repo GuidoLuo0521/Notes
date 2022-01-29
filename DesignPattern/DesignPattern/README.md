@@ -1056,7 +1056,11 @@ namespace BuilderPatternClass
 
 
 
+# 桥接模式
 
+
+
+参考 ： [桥接模式](../DevelopProcessNotes/README.md)
 
 
 
