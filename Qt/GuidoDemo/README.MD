@@ -1,4 +1,184 @@
-# 模型视图框架
+# README-images导言
+
+主要参考官方文档来写的 Qt 入门专题
+
+
+
+# Raster Window Example
+
+
+
+This example shows how to create a minimal [QWindow](https://doc.qt.io/qt-5/qwindow.html) based application using [QPainter](https://doc.qt.io/qt-5/qpainter.html) for rendering.
+
+
+
+## Application Entry Point
+
+```c++
+int main(int argc, char **argv)
+{
+    QGuiApplication app(argc, argv);
+
+    RasterWindow window;
+    window.show();
+
+    return app.exec();
+}
+```
+
+The entry point for a [QWindow](https://doc.qt.io/qt-5/qwindow.html) based application is the [QGuiApplication](https://doc.qt.io/qt-5/qguiapplication.html) class. It manages the GUI application's control flow and main settings. We pass the command line arguments which can be used to pick up certain system wide options.
+
+From there, we go on to create our window instance and then call the [QWindow::show](https://doc.qt.io/qt-5/qwindow.html#show)() function to tell the windowing system that this window should now be made visible on screen.
+
+Once this is done, we enter the application's event loop so the application can run.
+
+
+
+## RasterWindow Declaration
+
+```c++
+#include <QtGui>
+
+class RasterWindow : public QWindow
+{
+    Q_OBJECT
+public:
+    explicit RasterWindow(QWindow *parent = 0);
+
+    virtual void render(QPainter *painter);
+
+public slots:
+    void renderLater();
+    void renderNow();
+
+protected:
+    bool event(QEvent *event) override;
+
+    void resizeEvent(QResizeEvent *event) override;
+    void exposeEvent(QExposeEvent *event) override;
+
+private:
+    QBackingStore *m_backingStore;
+};
+```
+
+We first start by including the `<QtGui>` header. This means we can use all classes in the Qt GUI module. Classes can also be included individually if that is preferred.
+
+The RasterWindow class subclasses [QWindow](https://doc.qt.io/qt-5/qwindow.html) directly and provides a constructor which allows the window to be a sub-window of another [QWindow](https://doc.qt.io/qt-5/qwindow.html). Parent-less QWindows show up in the windowing system as top-level windows.
+
+The class declares a [QBackingStore](https://doc.qt.io/qt-5/qbackingstore.html) which is what we use to manage the window's back buffer for [QPainter](https://doc.qt.io/qt-5/qpainter.html) based graphics.
+
+*The raster window is also reused in a few other examples and adds a few helper functions, like renderLater().*
+
+
+
+## RasterWindow Implementation
+
+```c++
+RasterWindow::RasterWindow(QWindow *parent)
+    : QWindow(parent)
+    , m_backingStore(new QBackingStore(this))
+{
+    setGeometry(100, 100, 300, 200);
+}
+```
+
+In the constructor we create the backingstore and pass it the window instance it is supposed to manage. We also set the initial window geometry.
+
+```c++
+void RasterWindow::exposeEvent(QExposeEvent *)
+{
+    if (isExposed())
+        renderNow();
+}
+```
+
+Shortly after calling [QWindow::show](https://doc.qt.io/qt-5/qwindow.html#show)() on a created window, the virtual function [QWindow::exposeEvent](https://doc.qt.io/qt-5/qwindow.html#exposeEvent)() will be called to notify us that the window's exposure in the windowing system has changed. The event contains the exposed sub-region, but since we will anyway draw the entire window every time, we do not make use of that.
+
+The function [QWindow::isExposed](https://doc.qt.io/qt-5/qwindow.html#isExposed)() will tell us if the window is showing or not. We need this as the exposeEvent is called also when the window becomes obscured in the windowing system. If the window is showing, we call renderNow() to draw the window immediately. We want to draw right away so we can present the system with some visual content.
+
+```c++
+void RasterWindow::resizeEvent(QResizeEvent *resizeEvent)
+{
+    m_backingStore->resize(resizeEvent->size());
+}
+```
+
+The resize event is guaranteed to be called prior to the window being shown on screen and will also be called whenever the window is resized while on screen. We use this to resize the back buffer, and defer rendering to the corresponding/following expose event.
+
+```c++
+void RasterWindow::renderNow()
+{
+    if (!isExposed())
+        return;
+
+    QRect rect(0, 0, width(), height());
+    m_backingStore->beginPaint(rect);
+
+    QPaintDevice *device = m_backingStore->paintDevice();
+    QPainter painter(device);
+
+    painter.fillRect(0, 0, width(), height(), QGradient::NightFade);
+    render(&painter);
+    painter.end();
+
+    m_backingStore->endPaint();
+    m_backingStore->flush(rect);
+}
+```
+
+The renderNow function sets up what is needed for a [QWindow](https://doc.qt.io/qt-5/qwindow.html) to render its content using [QPainter](https://doc.qt.io/qt-5/qpainter.html). As obscured windows have will not be visible, we abort if the window is not exposed in the windowing system. This can for instance happen when another window fully obscures this window.
+
+We start the drawing by calling [QBackingStore::beginPaint](https://doc.qt.io/qt-5/qbackingstore.html#beginPaint)() on the region we want to draw. Then we get the [QPaintDevice](https://doc.qt.io/qt-5/qpaintdevice.html) of the back buffer and create a [QPainter](https://doc.qt.io/qt-5/qpainter.html) to render to that paint device.
+
+To void leaving traces from the previous rendering and start with a clean buffer, we fill the entire buffer with the color white. Then we call the virtual render() function which does the actual drawing of this window.
+
+After drawing is complete, we call endPaint() to signal that we are done rendering and present the contents in the back buffer using [QBackingStore::flush](https://doc.qt.io/qt-5/qbackingstore.html#flush)().
+
+```c++
+void RasterWindow::render(QPainter *painter)
+{
+    painter->drawText(QRectF(0, 0, width(), height()), Qt::AlignCenter, QStringLiteral("QWindow"));
+}
+```
+
+The render function contains the drawing code for the window. In this minial example, we only draw the string "[QWindow](https://doc.qt.io/qt-5/qwindow.html)" in the center.
+
+
+
+## Rendering Asynchronously
+
+```c++
+void RasterWindow::renderLater()
+{
+    requestUpdate();
+}
+```
+
+We went through a few places where the window needed to repainted immediately. There are some cases where this is not desirable, but rather let the application return to the event loop and schedule the repaint for later. We achieve this by requesting an update, using [QWindow::requestUpdate](https://doc.qt.io/qt-5/qwindow.html#requestUpdate)(), which will then be delivered when the system is ready to repaint.
+
+```c++
+bool RasterWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        renderNow();
+        return true;
+    }
+    return QWindow::event(event);
+}
+```
+
+We reimplement the virtual [QObject::event](https://doc.qt.io/qt-5/qobject.html#event)() function to handle the update event. When the event comes in we call renderNow() to render the window right away.
+
+
+
+
+
+
+
+# `ModelViewDemo`
+
+## 模型视图框架
 
 传统的方法，就一个控件里面有一个内部容器用来存放数据，这个情况，可能很直观，但**会导致数据同步的问题**，因此模型视图的出现就避免了这个问题，因为，他只是提供一些标准化的接口，而不维护内部数据容器，所以，没有这个问题。
 
@@ -16,7 +196,7 @@
 
 
 
-# 简介
+## 简介
 
 模型视图是一种 `UI / data sets` 分离的技术，标准控件则未设计数据与UI分离，所以，Qt，里面有两套这个widgets
 
@@ -74,15 +254,15 @@ MyModel : public QAbstractItemModel
 
 [QDataWidgetMapper](https://doc.qt.io/qt-5/qdatawidgetmapper.html)是一个很好的解决方案，因为它将表单小部件映射到表格行，并且可以很容易地为数据库表构建表单。
 
-![image-20220125223907739](modelview.assets/image-20220125223907739.png)
+![image-20220125223907739](notes/README-images/image-20220125223907739.png)
 
 适配器的另一个例子是[QCompleter](https://doc.qt.io/qt-5/qcompleter.html)。Qt 有[QCompleter](https://doc.qt.io/qt-5/qcompleter.html)用于在 Qt 小部件（例如[QComboBox](https://doc.qt.io/qt-5/qcombobox.html)和如下所示的[QLineEdit](https://doc.qt.io/qt-5/qlineedit.html) ）中提供自动完成功能。[QCompleter](https://doc.qt.io/qt-5/qcompleter.html)使用模型作为其数据源。
 
-![image-20220125223928238](modelview.assets/image-20220125223928238.png)
+![image-20220125223928238](notes/README-images/image-20220125223928238.png)
 
 
 
-# A Simple Model/View Application
+## A Simple Model/View Application
 
 从一个小例子了解 model view 
 
@@ -183,7 +363,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 
 当模型的数据需要更改时会发生什么？视图如何意识到数据发生了变化，需要再次读取？该模型必须发出一个信号，表明哪些单元格范围发生了变化。
 
-![image-20220125233911516](modelview.assets/image-20220125233911516.png)
+![image-20220125233911516](notes/README-images/image-20220125233911516.png)
 
 
 
@@ -193,7 +373,7 @@ date() 接口，除了控制显示内容，也控制其他的变化，根据 参
 
 **相当于，每一个操作，都会调用一次date() 接口，获取的所有信息均是通过 date() 接口来获取。**
 
-![image-20220125233911516](modelview.assets/image-20220125233911516.png)
+![image-20220125233911516](notes/README-images/image-20220125233911516.png)
 
 `(file source: examples/widgets/tutorials/modelview/2_formatting/mymodel.cpp)`
 
@@ -255,7 +435,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 
 ## A Clock inside a Table Cell
 
-![image-20220126143645147](modelview.assets/image-20220126143645147.png)
+![image-20220126143645147](notes/README-images/image-20220126143645147.png)
 
 在第一行一列（0,0）的位置，增加一个显示时间的东西
 
@@ -391,9 +571,9 @@ setData()，每次在用户编辑单元格的时候都会调用
 
 > The `index` parameter tells us which field has been edited and `value` provides the result of the editing process. 
 >
->  The role will always be set to [Qt::EditRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum) because our cells only contain text
+> The role will always be set to [Qt::EditRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum) because our cells only contain text
 >
->  If a checkbox were present and user permissions are set to allow the checkbox to be selected, calls would also be made with the role set to [Qt::CheckStateRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum).
+> If a checkbox were present and user permissions are set to allow the checkbox to be selected, calls would also be made with the role set to [Qt::CheckStateRole](https://doc.qt.io/qt-5/qt.html#ItemDataRole-enum).
 
 ~~~c++
 Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
@@ -410,10 +590,9 @@ Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
 
 
 
-# 参考
+## 参考
 
 [modelview 官方文档](https://doc.qt.io/qt-5/modelview.html)
 
 [Model/View Programming](https://doc.qt.io/qt-5/model-view-programming.html)
-
 
