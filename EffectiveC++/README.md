@@ -88,3 +88,132 @@ Template 的相关考虑与设计已经弥漫整个 C++ ,良好的守则中，�
 * 当跨入 `STL`的时候，你又会了解到，迭代器和函数对象都是在 C 指针上塑造出来的，所以，对 `STL`的迭代器和函数对象而言，旧式的 C `pass by value`守则再次适用。
 
 <font color=red>**所以，守则就是在这四个类型上面切换策略。**</font>
+
+
+
+
+
+# 条款2 尽量以 `const`，`enum`，` inline`替换 `#define`
+
+这个条款或许改成  **宁可以编译器替换预处理器**
+
+因为， `#define` 不被视为语言的一部分，这正是问题所在。所以，当定义一个宏
+
+~~~c++
+#define ASPECT_RATIO 1.63
+~~~
+
+ 记号名称 `ASPECT_RATIO` 也许从未被编译器看见；也许在编译器开始处理源代码之前它就被预处理器移走了。于是，`ASPECT_RATIO` 可能就没有进入记号表`sysbol table`。于是，在运用此常量，但是又获得一个编译错误信息的时候，就可能会带来疑惑，因为这错误提到的是 `1.63` 而非 `ASPECT_RATIO` ，但是又对此记号毫无概念，那么查找的时候就会很麻烦，从而浪费时间。
+
+​	解决方法以一个常亮替换上面的宏
+
+~~~c++
+const double ASpectRation = 1.63;
+~~~
+
+所以，作为一个常量，那就肯迪会被记号表看到。
+
+
+
+## **以常量替换 `#define` 的两种特殊情况**
+
+* 定义常量指针
+
+  > 因为常量指针通常放在头文件中，所以如果要在头文件中写常量指针，最好写两次
+  >
+  > ~~~c++
+  > const char* const author = "guido";
+  > // 更好的是
+  > const std::string author = "guido";
+  > ~~~
+  >
+  > 
+
+* `class` 专属常量
+
+  > 要将常量的作用域（scope）限制在`class`之中，那必须让它成为 `class` 的一个成员
+  >
+  > ~~~c++
+  > // .h
+  > class GamePlayer
+  > {
+  >     private:
+  >     static const int NumTurns = 5; // 常量声明，而非定义，就是说明，此时还没有给内存空间。
+  >     int m_scores[NumTurns]; // 使用常量
+  > }
+  > //.cpp
+  > const int GamPlayer::NumTurns;	// 常量定义，就是要内存空间了。因为声明的时候有值了，所以，此时就可以不设初值了
+  > ~~~
+  >
+  > ！！！ 但是，没办利用 `#define` 为 `class` 创建一个专属常量，因为 `#define` 不重视作用域（scope）
+  >
+  > 一旦被定义，他就在其后的编译过程中有效（除非 `#undef`），所以，`#define` 不具备封装性。而 `const` 是可以被封装的。
+
+
+
+## 需要在 `class` 编译期间知道一个 `class` 常量值怎么办
+
+因为有的编译器不支持 `in class 初值设定`，那么上面的定义 `static const int NumTurns = 5;` 就获取不了这个值了。。
+
+也有替换方式，使用 `enum`
+
+~~~c++
+// .h
+class GamePlayer
+{
+    private:
+    enum { NumTurns = 5 };	// the enum hack
+    int m_scores[NumTurns]; // 使用常量
+}
+//.cpp
+const int GamPlayer::NumTurns;	// 常量定义，就是要内存空间了。因为声明的时候有值了，所以，此时就可以不设初值了
+~~~
+
+
+
+## `enum hack`
+
+**好处** 
+
+* 不能对 `enum` 常量值取地址，所以，别人不能更改，如果使用 pointer 或 reference，那就可能被别人使用取地址，更换值。造成错误
+* 实用主义，其他别人用到了，所以必须认识它。
+* 是 `template metaprogramming`（模板元编程）的基础技术（条款48）
+
+
+
+## 宏函数
+
+虽然，宏函数没有调用开销，但是，带参数的宏错误的可能性却很大
+
+~~~c++
+// 以 a 和 b 的较大值调用 f
+#define CALL_WITH_MAX(a, b) f((a) > (b) ? (a) : (b))
+
+// 情况
+int a = 5, b = 0;
+CALL_WITH_MAX( ++a, b); 			// a 被累加两次
+CALL_WITH_MAX( ++a, b + 10); 		// a 被累加一次
+~~~
+
+所以，上面的情况就可能出错，那么更好的替换的情况就是， **使用模板函数来替换** 就可以获得同等的效率和安全性
+
+`template inline` （条款30）
+
+~~~c++
+template<typename T>
+inline void callWithMax(const T& a, const T& b)
+{
+    f( a > b ? a : b );
+}
+~~~
+
+有了 `consts`，`enums`和 `inlines`，我们对预处理器（特别是`#define`）的需求降低了，但并非完全消除。
+
+`#include ` 任然是必需品，而`#indef / #ifndef`也继续扮演 **控制编译** 的重要角色
+
+
+
+## 总结
+
+* 对于单纯常量，最好使用 `const`对象或 `enums` 替换 `#defines`
+* 对于形似函数的宏`macros`，最好改用 `inline`函数替换 `#define`
