@@ -217,3 +217,125 @@ inline void callWithMax(const T& a, const T& b)
 
 * 对于单纯常量，最好使用 `const`对象或 `enums` 替换 `#defines`
 * 对于形似函数的宏`macros`，最好改用 `inline`函数替换 `#define`
+
+
+
+
+
+# 条款3	尽可能使用`const`
+
+`const` 允许你指定一个语义约束（即，指定一个不该改动的对象），而编译器会强制实施这项约束。它允许你告诉编译器和其他程序员，某值应该保持不变。只要某值保持不变是事实，那么，就应该明确的说出来，因为，说出来就可以获得编译器的帮助，确保这条约束不被违反。
+
+`const`可以修饰的东西太多了
+
+*  指针
+* 数值
+* 函数
+* 。。。
+
+虽然使用的很多，但是并不高深。法则如下
+
+* 如果关键字 `const` 出现在星号的左边，表示被指物是常量
+* 如果关键字 `const` 出现在星号的右边，则表示指针自身是常量。（这就话就是，出现在右边的只有指针咯，函数也算指针~~）
+* 如果两边都出现，那就是物和指针都是常量
+
+> 如果物是常量，有两种写法
+>
+> ~~~c++
+> void f1( const Widget* pw);		// f1 获得一个指针，指向一个常量的 Widget 对象
+> void f2( Widget const * pw);	// f2 一样
+> ~~~
+>
+> 那就是看 `const` 后面跟的是什么
+>
+> ~~~c++
+> 第一个 const 后面是 Widget ;
+> 第二个 const 后面是 *pw;			都表示一个对象
+> 还是第一条法则，如果关键字 `const` 出现在星号的左边，表示被指物是常量
+> ~~~
+
+
+
+## `STL` 迭代器
+
+`stl` 迭代器系列，就是以指针为根据塑造出来的，所以，迭代器的作用就像 `T*`指针。
+
+声明迭代器为 `const` 就像声明指针为 `const` 一样（即，声明一个 `T* const `）, 表明，这个指针不能更改，但是，指针指向的对象可以更改。
+
+如果，希望迭代器所指的东西不可被改动（即：一个 `const T*` 指针），那就可以用 `const_iterator`
+
+~~~c++
+std::vector<int> vec;
+const std::vector<int>::iterator iter = vec.begin();	// 声明迭代器为 const ，指针不能更改，指向内容可以更改
+*iter = 10;		// 正确
+++iter;			// 错误
+
+std::vector<int>::const_iterator citer = vec.begin(); // 声明一个常量迭代器，说明，迭代器可更改，但是指向内容不可更改
+*citer = 10;	// 错误	
+++citer;		// 正确
+~~~
+
+
+
+## `const` 成员函数
+
+两个重要的理由
+
+* 使得 `class` 接口比较容易理解，得知哪个函数可以改变内容，哪个函数不可以改变内容。
+* 使操作 `const` 对象成为可能。
+
+**如果两个成员函数只是常量性不同，是可以被重载的，这也是c++的一大特性。**
+
+~~~c++
+class TextBlock {
+    public : 
+	    const char& operator [] (std::size_t position) const { return text[position]; }  // 重载 [] 为一个 const 对象	
+    	char& operator [] (std::size_t position) const { return text[position]; }		// 重载 [] 为一个非 const 对象 ( non-const ) 
+    private:
+    	std::string text;
+}
+
+// 例子 1
+fun()
+{
+    TextBlock ta("Hello");
+    std::cout << ta[0];	 	// 调用的是 non-const
+    ta[0] = 'j';		// 可以，因为返回的是 non-const
+    
+    const TextBlock tb("World");
+    std::cout << tb[0];		// 调用的是 const
+    tb[0] = 'j';		// 错误，因为返回的是 const
+}
+~~~
+
+最后写一个，可以在 `const` 成员函数内部更改值的方式
+
+~~~c++
+// .h
+class TextBlock {
+    public : 
+	    const char& operator [] (std::size_t position) const { return text[position]; }  // 重载 [] 为一个 const 对象	
+    	char& operator [] (std::size_t position) const { return text[position]; }		// 重载 [] 为一个非 const 对象 ( non-const ) 
+    
+    	std::size_t length() const;
+    private:
+    	std::string text;
+    	mutable std::size_t textLength;		// 这个修饰的成员变量，总能在 const 函数内被修改
+}
+
+// .cpp
+std::size_t length() const
+{
+    // 这里只做演示，真实情况自己判定，仅仅为了演示关键字  mutable 
+    textLength = 10;
+    return textLength;
+}
+~~~
+
+感觉后面的对实际开发的意义就不大了~~，就不写了，下面总结最后一条会写到。
+
+## 总结
+
+* 尽可能使用 `const`来帮助编译器侦测出错误， `const ` 可被施加于任何作用域内的对象，函数参数，函数返回类型，成员函数本体。
+* 当 `const`和 `non-const `成员函数有着实质等价的实现的时候，令 `non-const` 版本调用 `const` 版本可避免代码重复。
+
