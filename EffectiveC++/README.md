@@ -339,3 +339,181 @@ std::size_t length() const
 * 尽可能使用 `const`来帮助编译器侦测出错误， `const ` 可被施加于任何作用域内的对象，函数参数，函数返回类型，成员函数本体。
 * 当 `const`和 `non-const `成员函数有着实质等价的实现的时候，令 `non-const` 版本调用 `const` 版本可避免代码重复。
 
+
+
+# 条款4  确定对象使用前已被初始化
+
+## 常规初始化
+
+对于部分编译器，可能程序并不会初始化，**你可以永远相信宋义进，但是永远不要相信编译器**
+
+~~~c++
+int a;
+~~~
+
+这种，声明了，但是也可能没有初始化，这就会导致程序运行错误。
+
+**所以，无论何时，变量都初始化是最好的。**
+
+* 对于内置类型，手动初始化
+
+  > ~~~c++
+  > int a = 0;
+  > const char* text = "abc";
+  > 
+  > double b;
+  > std::cin >> b;
+  > ~~~
+  >
+  > 
+
+* 对于自定义类型，构造的时候初始化
+
+  > ~~~c++
+  > class PhoneNumber{};
+  > class ABEntry {
+  > public: 
+  >     ABEntry(const std::string& name, const std::& address, const std::list<PhoneNumber>& phones);
+  > 
+  > private: 
+  >     std::string m_name;
+  >     std::string m_address;
+  >     std::list<PhoneNumber> m_phones;
+  >     int m_numTimesConsulted;
+  > }
+  > 
+  > ABEntry::ABEntry(const std::string& name, const std::& address, const std::list<PhoneNumber>& phones)
+  > {
+  >     m_name = name;	// 赋值
+  >     m_address = address;
+  >     m_phones = phones;
+  >     m_numTimesConsulted = 0;
+  > }
+  > ~~~
+  >
+  > 上述会导致成员变量带我期望的值，但是并不是最佳的做法。因为不是被初始化，而是被赋值
+  >
+  > **C++规定，对象的成员变量的初始化动作发生在进入构造函数本体之前**
+  >
+  > 初始化的发生时间是在这些**成员变量的默认构造（default）**被调用的时候。
+  >
+  > 所以，最好的做法是增加初始化列表（initialization list）
+  >
+  > ~~~c++
+  > ABEntry::ABEntry(const std::string& name, const std::& address, const std::list<PhoneNumber>& phones)
+  >     ： m_name(name)	// 初始化
+  >     ， m_address(address)
+  >     ,  m_phones(phones)
+  >     ,  m_numTimesConsulted(0)
+  > {
+  >     // m_name = name;	// 赋值
+  >     // m_address = address;
+  >     // m_phones = phones;
+  >     // m_numTimesConsulted = 0;
+  > }
+  > ~~~
+  >
+  > 下面这一版本的效率比上面高，因为上面会调用默认构造，然后再进行赋值，而下面的就调用赋值（拷贝）构造
+  >
+  > 当我们构造也没有参数的时候，也最好调用一下，赋一个初值。
+  >
+  > ~~~c++
+  > ABEntry::ABEntry(const std::string& name, const std::& address, const std::list<PhoneNumber>& phones)
+  >     ： m_name()	// 初始化
+  >     ， m_address()
+  >     ,  m_phones()
+  >     ,  m_numTimesConsulted(0)
+  > {
+  > }
+  > ~~~
+
+  
+
+## 不同编译单元内定义的非本地静态对象
+
+  解释一下上面这句话
+
+  * 不同编译单元：编译的时候每个`cpp`生成的` .obj `文件
+  * 非本地的：就是不同的 `cpp` 之间的调用
+
+  代码解释，比如有一个文件系统的类，这个肯定是一个单例的类了，全局只有一个
+
+  ~~~c++
+  // 
+  class FileSystem {
+  public:
+      std::size_t numDisk() const;    
+  };
+  
+  extern FileSystem tfs;	// 预备给客户使用的
+  ~~~
+
+  `FileSystem` 对象绝对不是稀松平常，无关痛痒的对象。因此，如果调用者在 `tfs` 对象构造前就使用它，就会得到惨重的灾情。
+
+  **举例**
+
+  ~~~c++
+  class Directory {	// 由程序库客户建立
+  public:
+      Directory(params);
+  }
+  
+  Directory::Directory(params )
+  {
+      std::size_t disks = tfs.numDisk();
+  }
+  
+  // 使用
+  Directory dir(params);
+  ~~~
+
+  上述代码中，如果在调用 `Directory(params)`的时候，`tfs` 并没有初始化，那就完球了。
+
+  因为 **c++ 对于定义在不同编译单元内的 non-local static 对象，并没有明确的先后顺序**
+
+## 解决方案 
+
+`local` 代替  `non-local`
+
+一个小设计就可以使得这个问题消除。因为 **c++ 对于定义在不同编译单元内的 non-local static 对象，并没有明确的先后顺序**，那么，我在本地初始化不就行了。
+
+**c++ 保证，函数内的 local static 对象会在 该函数调用期间 首次遇上该对象的定义式的时候被初始化。**
+
+所以，如果我以返回一个`reference` 指向一个 `local static` 对象替换成直接访问 non-local static 对象，那么就能保证肯定被初始化咯。下面看代码
+
+~~~c++
+// 
+class FileSystem {
+public:
+    std::size_t numDisk() const;    
+};
+
+//extern FileSystem tfs;	// 预备给客户使用的
+// 替换成
+FileSystem& tfs()
+{
+    static FileSystem fs;
+    return fs;
+}
+
+// 调用
+Directory::Directory(params )
+{
+    std::size_t disks = tfs().numDisk();
+}
+~~~
+
+这样就能保证每次肯定先被初始化了。
+
+## 多线程的时候
+
+上面的返回 `reference` 比较简单，对于单线程的时候是可以使用的，但是如果遇到多线程同时调用的时候。这个时候问题就来了。`static FileSystem fs`就有不确定性了。所以，处理这个麻烦的一种做法就是，在单线程的时候手动的调用一下所有的 `reference returning`。消除多线程的**竞速形式**。
+
+
+
+## 总结
+
+* 为内置类型，手动初始化
+* 构造函数最好使用初始化列表，列出的值应该与声明的值相同
+* 为免除**跨编译单元的初始化顺序**问题，采用 `local` 替代 `non-local`
+
