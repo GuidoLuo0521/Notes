@@ -875,5 +875,141 @@ public:
 
 
 
+# 条款8  别让异常逃离析构函数
+
+c++ 并不禁止析构函数吐出异常，但它也不鼓励你这样做。这是有理由的，考虑如下代码
+
+~~~C++
+class Widget {
+    public:
+    ~Widget(){};
+}
+
+void func()
+{
+    std::vector<Widget> v;
+}	// v 在这里被自动销毁
+~~~
+
+当V销毁的时候，会自动销毁内部的 `Widgets`。
+
+假设内部有 10 个 `Widget`，而销毁第一个的时候就出现了异常。其他 9 个 `Widget`还是应该被销毁（否则就发生了资源泄漏），但是假设调用`Widget`析构的时候，第二个异常又抛出来了，那么 程序就可能结束执行或导致不明确的行为。
+
+## 例子 数据库关闭
+
+如果使用一个 `class` 负责数据库的连接
+
+~~~c++
+class DBConnection {
+    public :
+    static DBConnection create();
+    
+    void close();
+}
+~~~
+
+那么，为了确保客户不忘记关闭连接，那么一个合理的做法就是在 析构的时候调用一次 `close()`
+
+~~~c++
+class DBConnection {
+    public :
+    static DBConnection create();
+    
+    void close();
+}
+
+// 
+class DBConn {
+    public :
+    	~DBConn() {
+			m_db.close();	// 调用一次 close();
+    	}
+    private:
+    	DBConnection m_db;
+}
+~~~
+
+所以，这时候就允许客户写出这样的代码
+
+~~~c++
+void func()
+{
+    DBconn dbc(DBConnection::create());
+    
+}	// 结束的时候自动关闭
+~~~
+
+只要调用 `close()` 正常，那么一切都很美好。但是如果调用异常，那么就会出现麻烦了。
+
+有两个办法可以避免这一问题。`DBConn` 的析构函数可以：
+
+* 如果 `close() `抛出异常就结束程序，通常通过调用 `abort()` 结束程序。
+
+  ~~~c++
+      ~DBConn() {
+          try {
+              close();
+          }
+          catch( ... ) {
+              // 打日志，记录调用失败
+              std::abort();
+          }          
+      }
+  ~~~
+
+* 吞下因调用 `close()` 而发生的异常
+
+  ~~~c++
+      ~DBConn() {
+          try {
+              close();
+          }
+          catch( ... ) {
+              // 打日志，记录调用失败
+              
+          }          
+      }
+  ~~~
+
+  ​	但是，吞下异常是个坏主意，因为压制了"某些动作失败"的重要信息
+
+上述两种方法都不是太好。问题的原因在于，两者都无法对“异常 close() 抛出异常”的情况作出反应。
+
+那么就设计一个接口，让用户有机会对可能出现的问题作出反应。
+
+~~~c++
+class DBConn {
+    public :
+    	~DBConn() {
+            if( !closed ){
+                try {
+		            close();
+        		}
+        		catch( ... ) {
+            		// 打日志，记录调用失败
+            		std::abort();
+        		}    
+            }
+    	}
+    
+    	void close(){
+            m_db.close();
+            m_closed = true;
+        }
+    private:
+    	DBConnection m_db;
+	    bool m_closed;
+}
+~~~
+
+上述的做法就是，把调用  `close()`的责任从 `DBConn` 析构函数的手上移动到 `DBConn`的客户手上，然后在析构的时候增加一个【双保险】。
+
+**如果某个操作可能在失败的时候抛出异常，而又存在某种需要必须处理该异常，那么这个异常必须来自析构以外的某个函数**
+
+## 总结
+
+* 析构函数绝对不要吐出异常。如果一个被析构函数调用的函数可能抛出异常，析构函数应该捕捉任何异常，然后吞下他们（不进行后面的传播），结束程序。
+* 如果客户需要对某个操作函数运行期间抛出的异常做出反应，那么 `class`应该提供一个普通函数（而非析构）来执行。
+
 
 
