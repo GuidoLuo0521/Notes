@@ -517,3 +517,363 @@ Directory::Directory(params )
 * 构造函数最好使用初始化列表，列出的值应该与声明的值相同
 * 为免除**跨编译单元的初始化顺序**问题，采用 `local` 替代 `non-local`
 
+
+
+# 条款5  了解C++默默编写并调用了哪些函数
+
+如果写的 `空class`，那么 `C++`会自动帮他声明一个 `copy 构造函数`，一个`copy assignment操作符`和一个`析构函数`。
+
+好比，如果定义下面的一个类
+
+~~~c++
+class Empty{
+    
+};
+~~~
+
+就好比写成了下面这种，编译器自动帮你声明一个默认构造，为`public` 且 `inline` 的
+
+~~~c++
+class Empty{
+    public:
+    Empty(){}						// 默认构造 default
+	Empty(const Empty& rhs){}		 // 拷贝构造 copy 
+    ~Empty(){};						// 析构，是否为virtual，看是否含有虚函数
+    
+    Empty& operator = (const Empty& rhs){}	// 赋值构造  assignment
+};
+~~~
+
+只有当这些函数需要被调用的时候，才会被创建出来，怎么理解这句话，看下面代码
+
+~~~C++
+Empty e1;	// default 构造，析构 ，创建对象的时候，才创建
+Empty e2(e1);	// copy 构造
+e2 = e1;		// copy assignment 操作符
+~~~
+
+
+
+## 不会创建默认函数
+
+~~~c++
+class Empty{  
+    private:
+    std::string& m_name;
+    const int m_object;
+};
+~~~
+
+因为 c++ 规定了，**不让reference 改指向不同的对象，更改 `const` 成员是不合法的**，所以，就不会创建上述说的函数
+
+
+
+## 总结
+
+* 如果有必要，自己把这几个函数都写好
+
+
+
+# 条款6  若不想使用编译器自动生成的函数，就应该明确拒绝
+
+好比有一个表示叶子的类，人说，世界上没有两片叶子是相同的，既然这样，那么就不应该能让该函数出现拷贝或者赋值而生成一个副本。
+
+~~~c++
+class Leaf{
+    
+};
+
+// 所以，下面的两个写法应该是失败的，甚至，不应该让他通过编译
+Leaf l1;
+Leaf l2;
+Leaf l3(l1);	// 错误，不应该通过编译，拷贝构造
+l2 = l1;		// 不应该通过编译	，赋值
+~~~
+
+但是阻止这类的方法却不是很直观
+
+* 因为常规情况下，如果希望不支持这个函数，那么不声明就行了，但是条款5，他会自动帮你生成，所以也不行。
+
+* 声明为 `private` ，这样外界也不能调用，但是也不行，因为 `member` 函数或`friend`函数却可以调用。所以也不行。
+
+* 只声明，不实现。这样的话，在调用的时候，会出现一个链接错误，这样也好。所以，在大多数情况下，还是很多人使用这个方法。
+
+  ~~~c++
+  class Leaf{
+      public:
+      Leaf(const Leaf&);				// 只声明，cpp 中不实现
+      Leaf& operator = (const Leaf&);	 // 只声明，cpp 中不实现
+  };
+  ~~~
+
+  所以，如果有这样的声明，那么其他在调用它的时候，就会报编译器链接错误
+
+## 连接期移动到编译器
+
+通常，越往前报错肯定越容易找到
+
+那么，从链接期，移动到编译器就是最好的了，也是一个简单方法。
+
+其解决方法就是，声明一个基类，然后将此基类的拷贝构造和赋值构造声明为 `private`，因为调用子类的拷贝构造和赋值构造的时候，会调用基类的拷贝构造或赋值，而基类的又是`private`的，那么，就成功阻止了拷贝构造和赋值构造。
+
+~~~c++
+class Uncopyable{
+    protected:
+	    Uncopyable(){}
+    	/*virtual*/ ~Uncopyable(){}
+    private:
+    	Uncopyable(const Uncopyable&);
+    	Uncopyable& operator = (const Uncopyable&);
+};
+
+class Leaf : public Uncopyable {
+    // 这时候 Leaf 就不会在自动生成拷贝构造和赋值函数了
+}
+~~~
+
+**类不自动生成拷贝构造和赋值函数的方式就是：不满足默认的条件**
+
+## 总结
+
+明确拒绝的自动生成函数的方式
+
+* 主动声明构造函数
+
+* 将自动生成的函数声明为 `private`
+
+* 只声明，不实现
+
+* 声明一个带 `private`的拷贝和赋值基类，**:+1: 最好**的方式
+
+  ~~~c++
+  // C++ 11 中
+  class UnCopyable
+  {
+  protected:
+      UnCopyable();
+      virtual ~UnCopyable();
+  
+  private:
+      Q_DISABLE_COPY(UnCopyable)
+  };
+  
+  //c++11
+  #define Q_DISABLE_COPY(Class) \
+      Class(const Class &) = delete;\
+      Class &operator=(const Class &) = delete;
+  ~~~
+
+# 条款7 为多态基类声明 virtual 析构函数
+
+##   例子 记录时间
+
+记录时间的方式有很多种，因此，设计一个`TimeKeeper`的`base class`和一些`derived class` （派生类）作为不同的计时方法，是比较合理的：
+
+~~~c++
+class TimeKeeper {
+    public:
+    TimeKeeper();
+    ~TimeKeeper();
+}
+
+class AtomicClock : public TimeKeeper;
+class WaterClock : public TimeKeeper;
+class WristClock : public TimeKeeper;	// 手腕
+~~~
+
+如果客户只是想使用时间，而非计算的细节。那么这时候就可以设计一个 `factory` 函数，返回指针指向一个计时对象
+
+~~~c++
+TimeKeeper * getTimeKeeper();//返回一个指针，指向一个 TimeKeeper 的派生类
+~~~
+
+因为返回对象是堆中的，所以，删除也很重要
+
+~~~c++
+TimeKeeper * ptk = getTimerKeeper();
+...;
+delete ptk;    
+~~~
+
+但是，在这里，如果依赖客户去删除，这是比较危险的。因为这里的 `getTimerKeeper()`，返回的是一个 `dervied class`，而这个对象却经由 `base class`去删除，而`base class` 却有一个  `non-virtual` 析构函数。
+
+所以，这就是一个灾难，**c++明白指出，当 `derived class` 对象经由一个`base class`删除，而该`base class`带着一个`non-virtual` 析构函数，其结果未有定义 --- 通常的情况是，`base`的删除了，但是`derived`的却没有删除，这一种局部释放的诡异现象，从而造成内存泄漏，数据破坏的。
+
+~~~C++
+#include <iostream>
+
+void PrintNewLine()
+{
+	std::cout << '\n';
+}
+
+class A
+{
+public :
+	A() {
+		std::cout << __FUNCTION__ ;
+		PrintNewLine();
+	}
+	~A() {
+		std::cout << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+
+class B : public A
+{
+public:
+	B() {
+		std::cout << __FUNCTION__;
+		PrintNewLine();
+	}
+	~B() {
+		std::cout << __FUNCTION__;
+		PrintNewLine();
+	}
+
+private:
+
+};
+
+int main()
+{
+    std::cout << "Hello World!\n";
+
+	A* p = new B;
+
+	delete p;
+
+	getchar();
+
+	return 0;
+}
+~~~
+
+~~~tex
+// 输出内容
+Hello World!
+A::A
+B::B
+A::~A
+~~~
+
+而将 `class A` 修改为虚析构后
+
+~~~c++
+class A
+{
+public :
+	A() {
+		std::cout << __FUNCTION__ ;
+		PrintNewLine();
+	}
+	~A() {
+		std::cout << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+~~~
+
+~~~tex
+// 输出内容
+Hello World!
+A::A
+B::B
+B::~B
+A::~A
+~~~
+
+
+
+## 解决方案
+
+上面问题的解决方案也很简单，给 `base class` 一个 `virtual`析构函数。此后删除 `derived class`对象就会如你想的那般，会销毁。
+
+~~~c++
+class TimeKeeper {
+    public:
+    TimeKeeper();
+    virtual ~TimeKeeper();
+}
+
+TimeKeeper * ptk = getTimerKeeper();
+...;
+delete ptk;   	// 行为正确 
+~~~
+
+**任何一个 `class`，只要带有 `virtual`函数都可以几乎确定应该也有一个 `virtual`析构函数**
+
+所以，如果 `class `不含 `virtual`函数，通常表示它并不意图被做为一个 `base class`。当 `class`不企图被当做`base class`，令其析构函数为 `virtual`则是一个馊主意。看下面的例子
+
+~~~c++
+class Point {
+public:
+    Point(int x, int y);
+    ~Point();
+private:
+    int x, y;
+}
+~~~
+
+如果`int`占`32 bits`，那么他可以被塞入一个 `64bits`，如果传给其他语言如 `C FORTRAN`撰写的函数。当 `Point`的析构函数为`virtual`的时候，就引起了变化。
+
+因为要实现 `virtual`函数，对象就会包含一个 叫`virtual table`的东西，所以，当`Point class`含有 `virtual`函数，对象的体积就会增加；在`32bits `的计算机中占用 `64 ~ 96 bit`，因为要增加一个虚表指针。所以对象的体积增加了 50%~100%，这就不能够塞入一个 `64bits`的缓存器中了。
+
+所以，无端的把所有的析构函数声明为 `virtual`，就像从未声明它们为 `virtual`一样也是错误的，一种经验是：
+
+**只有当class 内含有至少一个 `virtual`函数的时候，才为它声明`virtual`析构函数。**
+
+
+
+## 抽象类
+
+如果希望拥有一个抽象类，但是类中没有任何纯虚函数怎么办？
+
+这时候，就可以吧析构作为纯虚函数咯。但是这里有一个窍门，必须为 `pure virtual`提供一份定义。
+
+~~~c++
+// pure virtual
+class VA
+{
+public:
+    virtual ~VA() = 0;
+};
+
+// `pure virtual` 的定义
+VA::~VA(){
+    std::cout << __FUNCTION__ ;
+    PrintNewLine();
+}
+
+class VB : public VA
+{
+public:
+    VB() {
+        std::cout << __FUNCTION__ ;
+        PrintNewLine();
+    }
+    ~VB() {
+        std::cout << __FUNCTION__ ;
+        PrintNewLine();
+    }
+};
+~~~
+
+给 `base class`一个 `virtual`析构函数，这个规则只适用于 `polymorphic`（带多态性质）的`base classes`身上。
+
+这种类（有虚函数的）的设计目的就是为了 `base classes` 处理 `derived class`对象。
+
+也有并不是用来处理 `derived classes`的 `base classes`，所以，他们就不必需要`virtual`析构函数。条款6中的`Uncopyable`。
+
+
+
+## 总结
+
+* `polymorphic`（带多态性质的）`base classes`应该声明一个 `virtual`析构函数。如果 `class`带有任何 `virtual`函数，它就应该拥有一个`virtual`析构函数。
+* Class 的目的不是为了作为`base classes`使用，或者不是为了具备`polymorphically`的形态，就不应该声明为`virtual`析构函数。
+
+
+
+
+
