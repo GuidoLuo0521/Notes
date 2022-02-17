@@ -1013,3 +1013,156 @@ class DBConn {
 
 
 
+# 条款9  绝不在构造和析构过程中调用 `virtual` 函数
+
+这条比较简单，因为 `virtual` 会寻找子类的，如果子类没有，那么就会调用基类的，因为这时候，还没有创建子类，所以无法找到子类的虚函数，也就没法调用子类的虚函数，其原理是因为，子类创建的时候，才把子类虚函数的地址加入到基类的虚表中。
+
+~~~C++
+#pragma once
+
+#include "../Common/common.h"
+
+class A {
+public:
+	A(){print();}
+	virtual ~A(){}
+	virtual void print()	{
+		cout << "A::" << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+
+class B : public A{
+public:
+	B(){}
+	virtual ~B(){}
+
+	virtual void print()	{
+		cout << "B::" << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+~~~
+
+进行到B的时候，A中的虚表地址就更改了。
+
+![image-20220217212422176](README-images/image-20220217212422176.png)
+
+所以，如下调用，输出结果。如下图，并没有进入到子类的虚函数中
+
+~~~c++
+    std::cout << "Hello World!\n";
+    B b;
+    b.print();
+~~~
+
+
+
+![image-20220217212512562](README-images/image-20220217212512562.png)
+
+但是如果将虚函数调用到 B 的也就是 `derived class`，那么，就是如下代码
+
+~~~c++
+#pragma once
+
+#include "../Common/common.h"
+
+class A {
+public:
+	A(){		//print();	}
+	virtual ~A(){}
+
+	virtual void print()	{
+		cout << "A::" << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+
+class B : public A
+{
+public:
+	B()	{
+		print();
+	}
+	virtual ~B()	{
+	}
+
+	virtual void print()	{
+		cout << "B::" << __FUNCTION__;
+		PrintNewLine();
+	}
+};
+~~~
+
+![image-20220217212821557](README-images/image-20220217212821557.png)
+
+## 总结
+
+最好不要在析构或者构造中调用 `virtual`函数，因为这类调用从不下降到`derived class`（比起当前执行构造函数和析构函数的那层。）
+
+
+
+# 条款 10 令 operator= 返回一个 reference to *this
+
+关于赋值，可以写成如下，连续形式
+
+~~~c++
+int x, y, z;
+x = y = z = 10; // 赋值连锁形式
+~~~
+
+同时，这也是应该遵守的一个协议：
+
+~~~c++
+class A {
+public:
+	A() : a(++count){}
+
+	A& operator= (const A& a)
+	{
+		this->a = a.a;
+		return *this;
+	}
+
+	void print(const string& flag)
+	{
+		cout << __FUNCTION__ << " " << flag << " " << a;
+		PrintNewLine();
+	}
+private:
+	int a;
+
+	static int count;
+};
+
+int A::count = 0;
+~~~
+
+调用
+
+~~~c++
+    A a; 
+    a.print("a");
+    A a1;
+    a1.print("a1");
+    a1 = a = a1;	// 连续赋值
+    a.print("a");
+    a1.print("a1");
+~~~
+
+输出
+
+~~~tex
+Hello World!
+A::print a 1
+A::print a1 2
+A::print a 2
+A::print a1 2
+~~~
+
+
+
+## 总结
+
+赋值操作返回引用 `reference to *this`。
+
