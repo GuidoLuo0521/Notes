@@ -1166,3 +1166,124 @@ A::print a1 2
 
 赋值操作返回引用 `reference to *this`。
 
+
+
+# 条款11 在 `operator=` 中处理“自我复制”
+
+> 自我赋值，发生在对象被赋值给自己的时候
+
+~~~c++
+class Widget;
+Widget w;
+w = w;	// 明显的
+
+a[i] = a[j];	// i == j
+*px = *py;		// px 与 py 指向同一个东西
+
+class Base{};
+class Derived : public Base {}
+
+void func(const Base& rb, Derived* pd);	// 这里的 rb 和 *pd 可能也是同一个东西
+~~~
+
+如果要尝试自行管理资源的时候就可能会出现在**停止使用前意外的释放了它**。看下面代码
+
+~~~c++
+class Bitmap{};
+class Widget  {
+private:
+    Bitmap * pb;	// 指针：指向一个从 heap 分配的对象
+}
+~~~
+
+下面是 `operator=`实现代码，表面是合理的，实际上并不安全。
+
+~~~c++
+Widget& Widget::operator= (const Widget& rhs)
+{
+    delete pb;
+    pb = new Bitmap(*rhs.pb);
+    return *this;
+}
+~~~
+
+上面代码并不安全的地方在于，如果 `rhs`和`*this`是同一个东西，那么就会出现，`pb` 已经被删除了，而在 `new Bitmap(*rhs.pb)`的时候，发现`*rhs.pb`指向了一个被删除的对象，这里就有问题了！！！很难不保证客户没有这么蠢。
+
+## 证同测试
+
+所以，要阻止上面的错误，就可以先做一个 **证同测试**，就判定两个对象是否相同。
+
+~~~c++
+Widget& Widget::operator= (const Widget& rhs)
+{
+    if(this == &rhs)
+    {
+        return *this;	// 如果相同，就不做任何事情，直接赋值
+    }
+    
+    delete pb;
+    pb = new Bitmap(*rhs.pb);
+    return *this;
+}
+~~~
+
+现在这个版本，虽然安全性可以了，但是异常的问题还是有，代码的两个考虑方向。
+
+* 安全性
+* 异常性
+
+因为 **new Bitmap 会导致异常**（内存不足或者是Bitmap的copy构造抛出的异常。）`Widget`最终都会指向一个被删除的`Bitmap`，这是极其错误的，而且客户也不能够发现，无法删除，甚至无法安全读取。
+
+现在，越来越多的人对**异常安全**的关注度比**自我赋值**考虑得更多，而且考虑**异常安全性**也常常可以获得**自我赋值安全**。
+
+## 异常处理
+
+异常安全的处理方法其实很简单，就是一个目的，在赋值之前不要删除 
+
+~~~c++
+Widget& Widget::operator= (const Widget& rhs)
+{
+    if(this == &rhs)
+    {
+        return *this;	// 如果相同，就不做任何事情，直接赋值
+    }
+    
+    Bitmap* temp = pb;			// 赋值给其他指针
+    pb = new Bitmap(*rhs.pb);	// 将新的对象赋值给pb ，就算异常了，pb 仍然指向一部分内存.因为下面一句代码并不执行
+    delete temp;			   // 没异常，删除原来的 temp
+    return *this;
+}
+~~~
+
+## copy and swap 技术
+
+由于这个技术和 **异常处理**还是很有联系，而且，是一个常见的比较好的 `operator=` 的方法，所以，可以介绍一下。
+
+~~~c++
+class Widget{
+    void swap(Widget& rhs);	// rhs 数据和 *this 交换
+}
+
+Widget& Widget::operator=(const Widget& rhs)
+{
+    Widget temp(rhs);		// 建立一个副本，如果超过栈空间，编译器还会报错，就没有了异常提醒。
+    swap(temp);			    // 和 *this 数据交换
+    return *this;			// 返回*this
+}
+~~~
+
+很巧妙，虽然失去了代码的清晰性，但是还是换来了更多的好处。可以值得一学习。
+
+
+
+## 总结
+
+* 确保当对象自我赋值的时候，`operator=`有良好行为。其中技术包括比较“来源对象”和“目标对象”的地址（证同测试），还有合理的语句安排以及`copy and swap`。
+* 确定任何函数如果操作一个以上的对象，而其中多个对象是同一对象的时候，其行为仍然正确。
+
+
+
+
+
+
+
