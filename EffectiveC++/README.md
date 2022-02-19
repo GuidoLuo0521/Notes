@@ -1371,7 +1371,9 @@ class PriorityCustomer : public Customer
 
 ~~~
 
-上面的代码，迷惑性还是很大，看起来复制了所有的，但是**基类**的部分，**没有复制**！！！
+上面的代码，迷惑性还是很大，看起来复制了所有的，但是**基类**的部分，**没有复制**！！！（具体可看项目代码）
+
+![image-20220220001429634](README-images/image-20220220001429634.png)
 
 修改：
 
@@ -1386,6 +1388,14 @@ class PriorityCustomer : public Customer
     }
 
 ~~~
+
+![image-20220220001601070](README-images/image-20220220001601070.png)
+
+增加后，调用了一次**基类的 `operator=`**，则结果正确。（具体代码看项目中）
+
+
+
+
 
 ## 声明
 
