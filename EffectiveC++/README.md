@@ -1285,5 +1285,129 @@ Widget& Widget::operator=(const Widget& rhs)
 
 
 
+# 条款12 复制对象时勿忘每一个成分
 
+良好的封装是将对象的内部封装起来，留两个函数负责对象拷贝（复制），称之为 `copying` 函数
+
+* 拷贝构造
+* 赋值函数 （operator=）
+
+当我们自己实现 `copying`函数的时候，编译器又不会自动帮我们生成函数了，（条款5）
+
+## 修改成员变量时，`copying` 函数也要添加
+
+当我们考虑一个 `class`用来表现顾客，然后手动写出`copying`函数，使得外界对它们的调用会被日志记录下来。
+
+~~~c++
+void logCall(const std::string& funcName);
+
+class Customer {
+    public: 
+    Customer( const Customer& rhs);
+    Customer& operator= (const Customer& rhs);
+    
+    private:
+    std::string m_name;
+}
+
+    Customer::Customer( const Customer& rhs)
+        : m_name(rhs.m_name)
+    {
+            logCall(__FUNCTION__);
+    }
+    Customer& Customer::operator= (const Customer& rhs)
+    {
+        m_name = rhs.m_name;
+        logCall(__FUNCTION__);
+        
+        return *this;
+    }
+
+~~~
+
+上面的情况都很不错，常规使用的时候也很正常，但是，当我们突然要增加一个变量的时候，这就有问题了。
+
+~~~c++
+class Customer {
+    public: 
+    Customer( const Customer& rhs);
+    Customer& operator= (const Customer& rhs);
+    
+    private:
+    std::string m_name;
+    std::string m_date;		// 新增变量
+}
+~~~
+
+**在新增变量的时候，要记得拷贝和赋值都需要增加，**
+
+## 继承类的复制
+
+~~~c++
+class PriorityCustomer : public Customer
+{
+    public :
+	PriorityCustomer( const PriorityCustomer& rhs);
+    PriorityCustomer& operator= (const PriorityCustomer& rhs);
+    
+    private:
+    int m_priority;
+ 
+}
+
+    PriorityCustomer::PriorityCustomer( const PriorityCustomer& rhs)
+        ：Customer(rhs)
+        , m_priority(rhs.m_priority)
+    {
+            logCall(__FUNCTION__);
+    }
+    PriorityCustomer& PriorityCustomer::operator= (const PriorityCustomer& rhs)
+    {
+        m_priority = rhs.m_priority;
+        logCall(__FUNCTION__);
+        
+        return *this;
+    }
+
+~~~
+
+上面的代码，迷惑性还是很大，看起来复制了所有的，但是**基类**的部分，**没有复制**！！！
+
+修改：
+
+~~~c++
+    PriorityCustomer& PriorityCustomer::operator= (const PriorityCustomer& rhs)
+    {
+        m_priority = rhs.m_priority;
+        Customer::opeerator=(rhs);	// 增加基类的赋值
+        logCall(__FUNCTION__);
+        
+        return *this;
+    }
+
+~~~
+
+## 声明
+
+* 复制所有 `Local` 成员变量
+
+* 调用所有 `base class`内的适当的 `copying`函数
+
+  > 这里要说明一下，如果是`operator=`的就调用`operator=`
+  >
+  > 如果是拷贝构造的就调用拷贝构造，混合调用是不合理的
+  >
+  > **赋值就是赋值，新建对象就是新建对象**
+
+## 优化
+
+如果赋值和拷贝构造中的大部分代码相同，就可以新增一个 私有的`init()`的函数，供两个调用。
+
+* 方便管理，容易查找错误
+* 减少代码重复
+
+## 总结
+
+* `copying`函数，应该确保对象内的所有成员变量及所有`base class`的变量
+* 不要尝试以某个`copying`函数实现另一个`copying`函数，应该将共同机能的放进第三个函数，然后`copying`函数通过调用，达到目的。
 
