@@ -1,6 +1,8 @@
 > 记录阅读过程中的摘录和理解
 
-# 条款1  视C++为一个语言联邦
+# 让自己习惯`C++`
+
+## 条款1  视C++为一个语言联邦
 
 今天的C++是一个 **多重范型编程语言** ，一个同时支持 **过程形式，面向对象形式，函数形式，泛型形式，元编程形式** 的语言
 
@@ -10,14 +12,14 @@
 
 
 
-## C++ 的次语言分类
+### C++ 的次语言分类
 
 * C
 * Object-Oriented C++
 * Template c++
 * STL
 
-## C
+### C
 
 说到底，C++ 仍然是以C为基础
 
@@ -25,7 +27,7 @@
 >
 > 语句：`；`结束
 >
-> 预处理器： `#define`
+> 预处理器： `##define`
 >
 > 内置数据类型： `int`，`bool`
 >
@@ -41,7 +43,7 @@
 
 
 
-## Object-Oriented C++  
+### Object-Oriented C++  
 
 面向对象
 
@@ -61,7 +63,7 @@
 
 
 
-## Template C++
+### Template C++
 
 C++ 的泛型编程
 
@@ -73,13 +75,13 @@ Template 的相关考虑与设计已经弥漫整个 C++ ,良好的守则中，�
 
 
 
-## `STL`
+### `STL`
 
 `STL`是一个 ` template ` 程序库
 
 他对 容器（ containers），迭代器（iterators），算法（algorithms）以及函数对象（function objects）的约束有极佳的紧密配合与协调，然而 template 及程序库也可以用其他的想法构建出来。`STL`有自己的办事方式，所以要用他的时候，就自己遵守它的规定。、
 
-## 总结
+### 总结
 
 所以，当在上面四个类型切换的时候，要变换策略
 
@@ -93,14 +95,14 @@ Template 的相关考虑与设计已经弥漫整个 C++ ,良好的守则中，�
 
 
 
-# 条款2 尽量以 `const`，`enum`，` inline`替换 `#define`
+## 条款2 尽量以 `const`，`enum`，` inline`替换 `##define`
 
 这个条款或许改成  **宁可以编译器替换预处理器**
 
-因为， `#define` 不被视为语言的一部分，这正是问题所在。所以，当定义一个宏
+因为， `##define` 不被视为语言的一部分，这正是问题所在。所以，当定义一个宏
 
 ~~~c++
-#define ASPECT_RATIO 1.63
+##define ASPECT_RATIO 1.63
 ~~~
 
  记号名称 `ASPECT_RATIO` 也许从未被编译器看见；也许在编译器开始处理源代码之前它就被预处理器移走了。于是，`ASPECT_RATIO` 可能就没有进入记号表`sysbol table`。于是，在运用此常量，但是又获得一个编译错误信息的时候，就可能会带来疑惑，因为这错误提到的是 `1.63` 而非 `ASPECT_RATIO` ，但是又对此记号毫无概念，那么查找的时候就会很麻烦，从而浪费时间。
@@ -115,7 +117,7 @@ const double ASpectRation = 1.63;
 
 
 
-## **以常量替换 `#define` 的两种特殊情况**
+### **以常量替换 `##define` 的两种特殊情况**
 
 * 定义常量指针
 
@@ -145,13 +147,13 @@ const double ASpectRation = 1.63;
   > const int GamPlayer::NumTurns;	// 常量定义，就是要内存空间了。因为声明的时候有值了，所以，此时就可以不设初值了
   > ~~~
   >
-  > ！！！ 但是，没办利用 `#define` 为 `class` 创建一个专属常量，因为 `#define` 不重视作用域（scope）
+  > ！！！ 但是，没办利用 `##define` 为 `class` 创建一个专属常量，因为 `##define` 不重视作用域（scope）
   >
-  > 一旦被定义，他就在其后的编译过程中有效（除非 `#undef`），所以，`#define` 不具备封装性。而 `const` 是可以被封装的。
+  > 一旦被定义，他就在其后的编译过程中有效（除非 `##undef`），所以，`##define` 不具备封装性。而 `const` 是可以被封装的。
 
 
 
-## 需要在 `class` 编译期间知道一个 `class` 常量值怎么办
+### 需要在 `class` 编译期间知道一个 `class` 常量值怎么办
 
 因为有的编译器不支持 `in class 初值设定`，那么上面的定义 `static const int NumTurns = 5;` 就获取不了这个值了。。
 
@@ -171,7 +173,7 @@ const int GamPlayer::NumTurns;	// 常量定义，就是要内存空间了。因�
 
 
 
-## `enum hack`
+### `enum hack`
 
 **好处** 
 
@@ -181,13 +183,13 @@ const int GamPlayer::NumTurns;	// 常量定义，就是要内存空间了。因�
 
 
 
-## 宏函数
+### 宏函数
 
 虽然，宏函数没有调用开销，但是，带参数的宏错误的可能性却很大
 
 ~~~c++
 // 以 a 和 b 的较大值调用 f
-#define CALL_WITH_MAX(a, b) f((a) > (b) ? (a) : (b))
+##define CALL_WITH_MAX(a, b) f((a) > (b) ? (a) : (b))
 
 // 情况
 int a = 5, b = 0;
@@ -207,22 +209,22 @@ inline void callWithMax(const T& a, const T& b)
 }
 ~~~
 
-有了 `consts`，`enums`和 `inlines`，我们对预处理器（特别是`#define`）的需求降低了，但并非完全消除。
+有了 `consts`，`enums`和 `inlines`，我们对预处理器（特别是`##define`）的需求降低了，但并非完全消除。
 
-`#include ` 任然是必需品，而`#indef / #ifndef`也继续扮演 **控制编译** 的重要角色
-
-
-
-## 总结
-
-* 对于单纯常量，最好使用 `const`对象或 `enums` 替换 `#defines`
-* 对于形似函数的宏`macros`，最好改用 `inline`函数替换 `#define`
+`##include ` 任然是必需品，而`##indef / ##ifndef`也继续扮演 **控制编译** 的重要角色
 
 
 
+### 总结
+
+* 对于单纯常量，最好使用 `const`对象或 `enums` 替换 `##defines`
+* 对于形似函数的宏`macros`，最好改用 `inline`函数替换 `##define`
 
 
-# 条款3	尽可能使用`const`
+
+
+
+## 条款3	尽可能使用`const`
 
 `const` 允许你指定一个语义约束（即，指定一个不该改动的对象），而编译器会强制实施这项约束。它允许你告诉编译器和其他程序员，某值应该保持不变。只要某值保持不变是事实，那么，就应该明确的说出来，因为，说出来就可以获得编译器的帮助，确保这条约束不被违反。
 
@@ -256,7 +258,7 @@ inline void callWithMax(const T& a, const T& b)
 
 
 
-## `STL` 迭代器
+### `STL` 迭代器
 
 `stl` 迭代器系列，就是以指针为根据塑造出来的，所以，迭代器的作用就像 `T*`指针。
 
@@ -277,7 +279,7 @@ std::vector<int>::const_iterator citer = vec.begin(); // 声明一个常量迭�
 
 
 
-## `const` 成员函数
+### `const` 成员函数
 
 两个重要的理由
 
@@ -334,16 +336,16 @@ std::size_t length() const
 
 感觉后面的对实际开发的意义就不大了~~，就不写了，下面总结最后一条会写到。
 
-## 总结
+### 总结
 
 * 尽可能使用 `const`来帮助编译器侦测出错误， `const ` 可被施加于任何作用域内的对象，函数参数，函数返回类型，成员函数本体。
 * 当 `const`和 `non-const `成员函数有着实质等价的实现的时候，令 `non-const` 版本调用 `const` 版本可避免代码重复。
 
 
 
-# 条款4  确定对象使用前已被初始化
+## 条款4  确定对象使用前已被初始化
 
-## 常规初始化
+### 常规初始化
 
 对于部分编译器，可能程序并不会初始化，**你可以永远相信宋义进，但是永远不要相信编译器**
 
@@ -429,7 +431,7 @@ int a;
 
   
 
-## 不同编译单元内定义的非本地静态对象
+### 不同编译单元内定义的非本地静态对象
 
   解释一下上面这句话
 
@@ -471,7 +473,7 @@ int a;
 
   因为 **c++ 对于定义在不同编译单元内的 non-local static 对象，并没有明确的先后顺序**
 
-## 解决方案 
+### 解决方案 
 
 `local` 代替  `non-local`
 
@@ -505,13 +507,13 @@ Directory::Directory(params )
 
 这样就能保证每次肯定先被初始化了。
 
-## 多线程的时候
+### 多线程的时候
 
 上面的返回 `reference` 比较简单，对于单线程的时候是可以使用的，但是如果遇到多线程同时调用的时候。这个时候问题就来了。`static FileSystem fs`就有不确定性了。所以，处理这个麻烦的一种做法就是，在单线程的时候手动的调用一下所有的 `reference returning`。消除多线程的**竞速形式**。
 
 
 
-## 总结
+### 总结
 
 * 为内置类型，手动初始化
 * 构造函数最好使用初始化列表，列出的值应该与声明的值相同
@@ -519,7 +521,9 @@ Directory::Directory(params )
 
 
 
-# 条款5  了解C++默默编写并调用了哪些函数
+# 构造，析构，赋值运算
+
+## 条款5  了解C++默默编写并调用了哪些函数
 
 如果写的 `空class`，那么 `C++`会自动帮他声明一个 `copy 构造函数`，一个`copy assignment操作符`和一个`析构函数`。
 
@@ -554,7 +558,7 @@ e2 = e1;		// copy assignment 操作符
 
 
 
-## 不会创建默认函数
+### 不会创建默认函数
 
 ~~~c++
 class Empty{  
@@ -568,13 +572,13 @@ class Empty{  
 
 
 
-## 总结
+### 总结
 
 * 如果有必要，自己把这几个函数都写好
 
 
 
-# 条款6  若不想使用编译器自动生成的函数，就应该明确拒绝
+## 条款6  若不想使用编译器自动生成的函数，就应该明确拒绝
 
 好比有一个表示叶子的类，人说，世界上没有两片叶子是相同的，既然这样，那么就不应该能让该函数出现拷贝或者赋值而生成一个副本。
 
@@ -608,7 +612,7 @@ l2 = l1;		// 不应该通过编译	，赋值
 
   所以，如果有这样的声明，那么其他在调用它的时候，就会报编译器链接错误
 
-## 连接期移动到编译器
+### 连接期移动到编译器
 
 通常，越往前报错肯定越容易找到
 
@@ -633,7 +637,7 @@ class Leaf : public Uncopyable {
 
 **类不自动生成拷贝构造和赋值函数的方式就是：不满足默认的条件**
 
-## 总结
+### 总结
 
 明确拒绝的自动生成函数的方式
 
@@ -658,14 +662,14 @@ class Leaf : public Uncopyable {
   };
   
   //c++11
-  #define Q_DISABLE_COPY(Class) \
+  ##define Q_DISABLE_COPY(Class) \
       Class(const Class &) = delete;\
       Class &operator=(const Class &) = delete;
   ~~~
 
-# 条款7 为多态基类声明 virtual 析构函数
+## 条款7 为多态基类声明 virtual 析构函数
 
-##   例子 记录时间
+###   例子 记录时间
 
 记录时间的方式有很多种，因此，设计一个`TimeKeeper`的`base class`和一些`derived class` （派生类）作为不同的计时方法，是比较合理的：
 
@@ -700,7 +704,7 @@ delete ptk;
 所以，这就是一个灾难，**c++明白指出，当 `derived class` 对象经由一个`base class`删除，而该`base class`带着一个`non-virtual` 析构函数，其结果未有定义 --- 通常的情况是，`base`的删除了，但是`derived`的却没有删除，这一种局部释放的诡异现象，从而造成内存泄漏，数据破坏的。
 
 ~~~C++
-#include <iostream>
+##include <iostream>
 
 void PrintNewLine()
 {
@@ -786,7 +790,7 @@ A::~A
 
 
 
-## 解决方案
+### 解决方案
 
 上面问题的解决方案也很简单，给 `base class` 一个 `virtual`析构函数。此后删除 `derived class`对象就会如你想的那般，会销毁。
 
@@ -826,7 +830,7 @@ private:
 
 
 
-## 抽象类
+### 抽象类
 
 如果希望拥有一个抽象类，但是类中没有任何纯虚函数怎么办？
 
@@ -868,14 +872,14 @@ public:
 
 
 
-## 总结
+### 总结
 
 * `polymorphic`（带多态性质的）`base classes`应该声明一个 `virtual`析构函数。如果 `class`带有任何 `virtual`函数，它就应该拥有一个`virtual`析构函数。
 * Class 的目的不是为了作为`base classes`使用，或者不是为了具备`polymorphically`的形态，就不应该声明为`virtual`析构函数。
 
 
 
-# 条款8  别让异常逃离析构函数
+## 条款8  别让异常逃离析构函数
 
 c++ 并不禁止析构函数吐出异常，但它也不鼓励你这样做。这是有理由的，考虑如下代码
 
@@ -895,7 +899,7 @@ void func()
 
 假设内部有 10 个 `Widget`，而销毁第一个的时候就出现了异常。其他 9 个 `Widget`还是应该被销毁（否则就发生了资源泄漏），但是假设调用`Widget`析构的时候，第二个异常又抛出来了，那么 程序就可能结束执行或导致不明确的行为。
 
-## 例子 数据库关闭
+### 例子 数据库关闭
 
 如果使用一个 `class` 负责数据库的连接
 
@@ -1006,21 +1010,21 @@ class DBConn {
 
 **如果某个操作可能在失败的时候抛出异常，而又存在某种需要必须处理该异常，那么这个异常必须来自析构以外的某个函数**
 
-## 总结
+### 总结
 
-* 析构函数绝对不要吐出异常。如果一个被析构函数调用的函数可能抛出异常，析构函数应该捕捉任何异常，然后吞下他们（不进行后面的传播），结束程序。
+* 析构函数绝对不要吐出异常。如果一个被析构函数调用的函数可能抛出异常，**析构函数应该捕捉任何异常，然后吞下他们（不进行后面的传播），结束程序。**
 * 如果客户需要对某个操作函数运行期间抛出的异常做出反应，那么 `class`应该提供一个普通函数（而非析构）来执行。
 
 
 
-# 条款9  绝不在构造和析构过程中调用 `virtual` 函数
+## 条款9  绝不在构造和析构过程中调用 `virtual` 函数
 
 这条比较简单，因为 `virtual` 会寻找子类的，如果子类没有，那么就会调用基类的，因为这时候，还没有创建子类，所以无法找到子类的虚函数，也就没法调用子类的虚函数，其原理是因为，子类创建的时候，才把子类虚函数的地址加入到基类的虚表中。
 
 ~~~C++
-#pragma once
+##pragma once
 
-#include "../Common/common.h"
+##include "../Common/common.h"
 
 class A {
 public:
@@ -1063,9 +1067,9 @@ public:
 但是如果将虚函数调用到 B 的也就是 `derived class`，那么，就是如下代码
 
 ~~~c++
-#pragma once
+##pragma once
 
-#include "../Common/common.h"
+##include "../Common/common.h"
 
 class A {
 public:
@@ -1096,13 +1100,13 @@ public:
 
 ![image-20220217212821557](README-images/image-20220217212821557.png)
 
-## 总结
+### 总结
 
 最好不要在析构或者构造中调用 `virtual`函数，因为这类调用从不下降到`derived class`（比起当前执行构造函数和析构函数的那层。）
 
 
 
-# 条款 10 令 operator= 返回一个 reference to *this
+## 条款 10 令 operator= 返回一个 reference to *this
 
 关于赋值，可以写成如下，连续形式
 
@@ -1162,13 +1166,13 @@ A::print a1 2
 
 
 
-## 总结
+### 总结
 
 赋值操作返回引用 `reference to *this`。
 
 
 
-# 条款11 在 `operator=` 中处理“自我复制”
+## 条款11 在 `operator=` 中处理“自我复制”
 
 > 自我赋值，发生在对象被赋值给自己的时候
 
@@ -1209,7 +1213,7 @@ Widget& Widget::operator= (const Widget& rhs)
 
 上面代码并不安全的地方在于，如果 `rhs`和`*this`是同一个东西，那么就会出现，`pb` 已经被删除了，而在 `new Bitmap(*rhs.pb)`的时候，发现`*rhs.pb`指向了一个被删除的对象，这里就有问题了！！！很难不保证客户没有这么蠢。
 
-## 证同测试
+### 证同测试
 
 所以，要阻止上面的错误，就可以先做一个 **证同测试**，就判定两个对象是否相同。
 
@@ -1236,7 +1240,7 @@ Widget& Widget::operator= (const Widget& rhs)
 
 现在，越来越多的人对**异常安全**的关注度比**自我赋值**考虑得更多，而且考虑**异常安全性**也常常可以获得**自我赋值安全**。
 
-## 异常处理
+### 异常处理
 
 异常安全的处理方法其实很简单，就是一个目的，在赋值之前不要删除 
 
@@ -1255,7 +1259,7 @@ Widget& Widget::operator= (const Widget& rhs)
 }
 ~~~
 
-## copy and swap 技术
+### copy and swap 技术
 
 由于这个技术和 **异常处理**还是很有联系，而且，是一个常见的比较好的 `operator=` 的方法，所以，可以介绍一下。
 
@@ -1276,7 +1280,7 @@ Widget& Widget::operator=(const Widget& rhs)
 
 
 
-## 总结
+### 总结
 
 * 确保当对象自我赋值的时候，`operator=`有良好行为。其中技术包括比较“来源对象”和“目标对象”的地址（证同测试），还有合理的语句安排以及`copy and swap`。
 * 确定任何函数如果操作一个以上的对象，而其中多个对象是同一对象的时候，其行为仍然正确。
@@ -1285,7 +1289,7 @@ Widget& Widget::operator=(const Widget& rhs)
 
 
 
-# 条款12 复制对象时勿忘每一个成分
+## 条款12 复制对象时勿忘每一个成分
 
 良好的封装是将对象的内部封装起来，留两个函数负责对象拷贝（复制），称之为 `copying` 函数
 
@@ -1294,7 +1298,7 @@ Widget& Widget::operator=(const Widget& rhs)
 
 当我们自己实现 `copying`函数的时候，编译器又不会自动帮我们生成函数了，（条款5）
 
-## 修改成员变量时，`copying` 函数也要添加
+### 修改成员变量时，`copying` 函数也要添加
 
 当我们考虑一个 `class`用来表现顾客，然后手动写出`copying`函数，使得外界对它们的调用会被日志记录下来。
 
@@ -1341,7 +1345,7 @@ class Customer {
 
 **在新增变量的时候，要记得拷贝和赋值都需要增加，**
 
-## 继承类的复制
+### 继承类的复制
 
 ~~~c++
 class PriorityCustomer : public Customer
@@ -1397,7 +1401,7 @@ class PriorityCustomer : public Customer
 
 
 
-## 声明
+### 声明
 
 * 复制所有 `Local` 成员变量
 
@@ -1409,15 +1413,132 @@ class PriorityCustomer : public Customer
   >
   > **赋值就是赋值，新建对象就是新建对象**
 
-## 优化
+### 优化
 
 如果赋值和拷贝构造中的大部分代码相同，就可以新增一个 私有的`init()`的函数，供两个调用。
 
 * 方便管理，容易查找错误
 * 减少代码重复
 
-## 总结
+### 总结
 
 * `copying`函数，应该确保对象内的所有成员变量及所有`base class`的变量
 * 不要尝试以某个`copying`函数实现另一个`copying`函数，应该将共同机能的放进第三个函数，然后`copying`函数通过调用，达到目的。
+
+
+
+
+
+# 资源管理
+
+## 条款13   以对象管理资源
+
+现在看下面例子
+
+假设我们使用一个塑模投资行为（例如股票，债券等等）的程序集，其中，各式各样的投资类型继承自一个 `root class  Investment`：
+
+~~~c++
+class Investment {	// 投资类型的 root class 
+    static Investment* create( Type type);	//
+}
+~~~
+
+通过一个静态函数创建投资行为，那么调用端使用了这个函数返回的对象后，就有责任删除它。
+
+~~~c++
+void func()
+{
+    Investment * p = Investment::create(type);
+    // todo
+    
+    delete p;
+    p = nullptr;
+}
+~~~
+
+但是，一直强调的就是，**把用户当傻子，帮他考虑到一切他没有考虑到的。   如果他没删怎么办**
+
+* 长久过后，中间增加了很多逻辑，直接 `return`了。
+* 其他程序员动了这坨屎山，接手的又不知道
+* 。。。
+
+这时候，没删除的可能性就会增加。。。内存泄漏的可能性就会增加。
+
+### `auto_ptr`
+
+上面的情况就会导致内存泄漏等等问题。。。
+
+但是，如果我们在离开这个函数的时候，自动给他删除了不久好了么。
+
+这时候，标准库（std）中提供的，`auto_ptr`就是这种类型的特制产品。
+
+`auto_ptr`是一个**类指针对象**，他的析构函数，自动帮他释放掉，看下面的例子。
+
+~~~c++
+void func() {
+    std::auto_ptr<Investment> inv(Investment::create());
+    // todo
+}
+~~~
+
+### 两个关键的想法
+
+* 获得资源后，立刻放入 **管理对象**内。
+
+  > 上述代码就是，创建后，立刻放入（立刻初始化）管理对象 `auto_ptr inv` 中
+
+* 管理对象，采用析构函数，将资源释放掉，如果析构异常，那么参见条款8。
+
+### 注意事项
+
+因为`auto_ptr`被销毁的时候，会自动删除它的所指之物，所以，一定要注意，不能让多个 `auto_ptr`指向同一个对象。如果这样，那么这个对象就可能被删除多次，从而引发异常。
+
+所以，为了预防这个问题，如果使用 `auto_ptr copying`函数的时候，他们就会变成`null`，而复制所得的指针就将取得资源的唯一拥有权。
+
+
+
+### 引用计数
+
+~~~c++
+std::auto_ptr<Investment> inv(Investment::create());	// inv 指向对象
+std::auto_ptr<Investment> inv1(inv);				   // inv1 指向对象 ,inv == nullptr
+inv = inv1;											// inv 指向对象，inv1 == nullptr
+~~~
+
+因为 `std` 函数，要求元素能够**正常的发挥复制行为，因为，这些容器就**容不得 `auto_ptr`
+
+所以，`auto_ptr`就出现了替代产品，`reference-counting smart pointer`，就是自动追踪共有多少对象指向某笔资源，并在没人使用的时候，自动删除
+
+> 那就是在赋值或者拷贝的时候，引用计数增加 1.
+
+~~~c++
+void  func() 
+{
+    std::shared_ptr<Investment> inv(Investment::create());	 // inv 指向对象
+    std::shared_ptr<Investment> inv1(inv);				   // inv1 指向对象 
+	inv = inv1;						// 无改变，因为两个都指向同一个对象
+}
+~~~
+
+> 上述解决了`std的不能复制问题`
+
+### 注意
+
+`auto_ptr`和`shared_ptr`都是在析构内做的**delete 而非 delete[]**，所以，使用 `array`到 `auto_ptr`或者 `stared_ptr`是一个馊主意。虽然不能这样使用，但是部分编译器却没有检查，仍然可以使用
+
+~~~c++
+void  func() 
+{
+    std::shared_ptr<Investment> inv(new std::string[10]);	 // inv 指向对象
+}	// 这里如果使用 析构就错了 是 delete [] 而非 delete
+~~~
+
+### 总结
+
+* 为了防止资源泄漏，请使用 **`RAII`**(resource acquisition is initialization，资源获取就初始化)对象。他们在构造函数中获得资源，在析构函数中释放
+* 两个常被使用的 **`RAII`** 的`calss` 分别是 `shared_ptr`和`auto_ptr`。前者通常是较佳的选择，因为 `copy `行为比较直观，若选择 `auto_ptr`，复制会是它（复制物），指向 null。
+
+
+
+
 
