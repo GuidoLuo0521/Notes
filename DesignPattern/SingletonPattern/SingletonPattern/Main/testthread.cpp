@@ -48,7 +48,17 @@ ThreadEagerPtr::ThreadEagerPtr()
 
 void ThreadEagerPtr::run()
 {
-    EagerSingletonIncPtr();
+    //EagerSingletonIncPtr();
+    QElapsedTimer timer;
+    timer.start();
+
+    int i = gk_AutoIncrementCount;
+    while ( i-- )
+    {
+        EagerSingletonPtr::instance()->autoIncrement();
+    }
+
+    qDebug() << __FUNCTION__  << " : " << (double)timer.msecsSinceReference() / (double)1000;
 }
 
 ///

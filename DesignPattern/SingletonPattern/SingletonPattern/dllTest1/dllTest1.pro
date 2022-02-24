@@ -1,3 +1,6 @@
+include(../commonconfig.pri)
+
+
 QT -= gui
 
 TEMPLATE = lib
@@ -32,13 +35,11 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../out/SingletonPattern/target/release/ -ldllTest0
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../out/SingletonPattern/target/debug/ -ldllTest0
+else:unix: LIBS += -L$$PWD/../../out/SingletonPattern/target/ -ldllTest0
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllTest0/release/ -ldllTest0
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllTest0/debug/ -ldllTest0
-else:unix: LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllTest0/ -ldllTest0
 
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllDatabase/release/ -ldllDatabase
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllDatabase/debug/ -ldllDatabase
-else:unix: LIBS += -L$$PWD/../../build-SingletonPattern-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/dllTest0/ -ldllDatabase
-
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../out/SingletonPattern/target/release/ -ldllDatabase
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../out/SingletonPattern/target/debug/ -ldllDatabase
+else:unix: LIBS += -L$$PWD/../../out/SingletonPattern/target/ -ldllDatabase

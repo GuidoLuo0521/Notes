@@ -1,3 +1,5 @@
+include(../commonconfig.pri)
+
 QT -= gui
 
 TEMPLATE = lib
@@ -32,3 +34,4 @@ unix {
     target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
+
