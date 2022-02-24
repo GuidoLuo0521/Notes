@@ -1,0 +1,12 @@
+#ifndef DLLDATABASE_GLOBAL_H
+#define DLLDATABASE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(DLLDATABASE_LIBRARY)
+#  define DLLDATABASE_EXPORT Q_DECL_EXPORT
+#else
+#  define DLLDATABASE_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // DLLDATABASE_GLOBAL_H
