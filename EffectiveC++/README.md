@@ -1540,5 +1540,103 @@ void  func()
 
 
 
+## 条款14 在资源管理类中小心 `copying`行为
+
+> 这个条款就是说的 `Qt`里面 `QMutexLocker`的实现这种用法
+
+条款 13 说了这样一种观念，**在资源取得的时机便是初始化时机（`RAII`）**
+
+`std::auto_ptr` ，`std::shared_ptr` 就是使用这种模式，有时候，并非所有的资源都是在**堆**上建立的，这时候就需要我们自己去实现自己的资源管理类了。
+
+### `Mutex`
+
+假设 `Mutex`有两个接口 
+
+* lock()		，锁资源
+* unlock()    ，解锁资源
+
+那么可能在编程的时候就会出现，我是用了 lock()，但是函数中途退出了，那么这个资源就一直被锁上了。
+
+那么，这时候，就需要我们来建立一个，自动会解锁的`Mutex`了，实现他的主要的方式就是**在作用域块退出的时候自动 `unlock()`**
+
+那么，这个实现就好比下面的代码
+
+~~~c++
+class MutexManager
+{
+    MutexManager(const Mutex* mutex)	// 构造的时候记录
+        : m_mutex(mutex)	// 这里没判断是否为空
+    {
+        mutex->lock();
+    }
+    
+    ~MutexManager()
+    {
+        m_mutex->unlock()
+    }
+    
+    private:
+    Mutex* m_mutex
+}
+
+Mutex mutex;
+void func()
+{
+	MutexManager(&mutex);
+}	// 退出后，自动 unlock()
+~~~
+
+这样，我们就创建了一个永远会自动解锁的 锁管理器
 
 
+
+### `RAII` 对象被复制的时候
+
+因为是指针指向的对象，所以，不能深拷贝，两种解决方式
+
+* 禁用拷贝构造
+
+  > 条款 6 中有写到，
+
+  ~~~c++
+  class Uncopyable
+  {
+      
+  }
+  ~~~
+
+  
+
+* 对底层资源采用 **引用计数**
+
+  > 如果希望保有资源，直到最后一个使用者不使用了才销毁，那就可以采用这种方式了，**智能指针**就是这种方式
+  >
+  > 在上述例子中，在离开作用域的时候，我们是 `unlock()`而非删除，所以，常规的方式(`auto_ptr`)是不行的
+  >
+  > 比较有趣的是，`std::shared_ptr` 是可以自己指定删除器的
+
+  ~~~c++
+  class MutexManager
+  {
+      MutexManager(const Mutex* mutex)	// 构造的时候记录
+          : m_mutex(mutex, unlock)	// 这里没判断是否为空
+      {
+          mutex->lock();
+      }
+  
+      
+      private:
+      std::shared_ptr<Mutex> m_mutex
+  }
+  ~~~
+
+  这里可以查看 `QMutexLocker`的源码
+
+
+
+### 总结
+
+* 复制 `RAII`对象，必须一并复制它所管理的资源，所以，资源的`copying`行为，决定了`RAII`对象的 `copying`行为，毕竟管理的是资源
+* 普遍而常见的`RAII class copying`行为是
+  * 抑制拷贝
+  * 采用引用计数

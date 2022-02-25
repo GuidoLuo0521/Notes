@@ -1,5 +1,3 @@
-include(../commonconfig.pri)
-
 QT -= gui
 
 CONFIG += c++11 console
@@ -25,4 +23,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    Uncopyable.h
+    CarefullyCopying.h

@@ -1,3 +1,6 @@
+include(../commonconfig.pri)
+
+
 QT -= gui
 
 CONFIG += c++11 console
