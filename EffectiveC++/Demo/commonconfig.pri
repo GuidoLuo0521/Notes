@@ -1,7 +1,5 @@
-include(./topconfig.pri)
 
-
-OUT_ROOT_DIR=$$PWD/../out/SingletonPattern
+OUT_ROOT_DIR=$$PWD/../out/Demo
 
 CONFIG(debug,debug|release){
     DESTDIR += $$OUT_ROOT_DIR/target/debug

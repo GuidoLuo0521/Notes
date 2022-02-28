@@ -1640,3 +1640,74 @@ void func()
 * 普遍而常见的`RAII class copying`行为是
   * 抑制拷贝
   * 采用引用计数
+
+
+
+## 条款15 在资源管理类中提供对原始资源的访问
+
+> .条款 13 有这样一个观念：使用智能指针如 `auto_ptr`或`tr1::shared_ptr`保存`factory`函数，如 `createInvestment`的调用结果
+>
+> ~~~c++
+> std::tr1::shared_ptr<Inverstment> pinv (createInvestment());
+> ~~~
+
+现在，如果我需要以某个函数处理 `Inverstment`对象
+
+~~~c++
+int daysHeld(const Inverstment* pi);// 获取投资天数
+~~~
+
+如果想采用下面的方式调用它
+
+> ~~~c++
+> daysHeld(pinv);
+> ~~~
+>
+> 那么，编译都会出错误。
+
+因为，`pinv` 并不是一个 `Inverstment*`，而是需要的一个 `RAII class`对象（本例子中的`auto_ptr或shared_ptr`）转换为原始对象。
+
+那么，有两种方法可以达到这个目的
+
+* 显示转换
+
+  ~~~c++
+  pinv->get(); 	// 直接内部返回，像qt 一样
+  ~~~
+  
+* 隐式转换
+
+  ~~~c++
+  // 资源管理类，类似 shared_ptr	
+  // FontHandle 为资源
+  class Font		
+  {
+      public: 
+      explic Font(FontHandle fh):f(fh){}
+      ~Font(){releaseFont(f);}
+   
+      FontHandle get() const {return f;}			// 显示转换
+      operator FontHandle() const {return f;}		// 隐式转换
+      
+      private:
+      FontHandle f;    
+  }
+  ~~~
+
+  > 具体看项目代码
+
+### 总结
+
+隐式或显式，取决于项目，并不一定谁好谁坏
+
+* 显式的要多调用一次，比较安全
+* 隐式的可能出现安全隐患，比如赋值给另一个，另一个删除了，客户方便
+
+但是，要明白 `RAII class` 出现的目的，不是为了封装，而是为了，**更好的释放资源**
+
+**所以**
+
+每一个 `RAII class`都应该提供一个能够访问原始资源的方法。
+
+
+
