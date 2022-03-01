@@ -1711,3 +1711,41 @@ int daysHeld(const Inverstment* pi);// 获取投资天数
 
 
 
+## 条款16 成对使用 new 和 delete 的时候要采用相同策略
+
+> **策略**是重点
+
+比如下面的例子
+
+~~~c++
+std::string* array = new std::string[100];
+
+delete array;
+~~~
+
+上面的删除可能就删除了一个，剩下的99个都没有删除，如果是数组应该**明确的删除数组**。
+
+~~~c++
+delete [] array;
+~~~
+
+### typedef 
+
+对于 typedef 的部分
+
+~~~c++
+typedef std::string AddressLines[4];	// 每个的地址有四行，每行是一个string									
+~~~
+
+如果像下面这样 new
+
+~~~c++
+std::string * p = new AddressLines;		// 注意，这里的 new 返回的一个 new string[4];
+//所以删除的形式
+delete p;	// 未定义
+delete [] p;	// 正确
+~~~
+
+### 总结
+
+如果 new 的时候是 [] ，那么删除的时候，也要加 []
