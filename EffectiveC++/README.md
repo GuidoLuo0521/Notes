@@ -1749,3 +1749,48 @@ delete [] p;	// 正确
 ### 总结
 
 如果 new 的时候是 [] ，那么删除的时候，也要加 []
+
+
+
+## 条款17 以独立语句将 newed 对象置入智能指针
+
+这个直接看代码吧，记住就行了
+
+~~~c++
+int priority();
+void processWidget(std::tr1::shared_ptr<Widget> pw, int priority);
+
+// 这个编译不过
+processWidget(new Widget, priority());
+
+// 这个能编译过，但是不太好
+processWidget(std::tr1::shared_ptr<Widget>(new Widget), priority());
+
+// 这种最好
+std::tr1::shared_ptr<Widget> pw = std::tr1::shared_ptr<Widget>(new Widget);
+processWidget(pw, priority());
+~~~
+
+下面对第二种进行解释，他有几种执行次序，因为 `c++`的编译器对这个弹性很大，还是那句话，`你可以永远相信宋义进，但是不可相信编译器`。但是不管怎么样，后面的参数肯定先进行计算，所以，`std::tr1::shared_ptr()` 构造肯定最后，因为他执行完了，就执行函数了。
+
+**次序1**
+
+* `priority()`
+* `new Widget`
+* `std::tr1::shared_ptr()` 构造
+
+**次序2**
+
+* `new Widget`
+* `priority()`
+* `std::tr1::shared_ptr()` 构造
+
+如果，在次序二的情况，在**先 `new Widget` 而后，`priority()`，如果，`priority()`发生异常，那么  `new Widget`的数据就会丢失**。从而还没有放入智能指针中。
+
+所以，这里就可能产生异常。
+
+
+
+### 总结
+
+就是题目：以独立的语句将对象存入智能指针中。如果不这样，就可能出现异常。
