@@ -20,14 +20,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    rasterwindow.cpp
+    progresspage.cpp \
+    workerthread.cpp
 
 HEADERS += \
     mainwindow.h \
-    rasterwindow.h
+    progresspage.h \
+    workerthread.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    progresspage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
