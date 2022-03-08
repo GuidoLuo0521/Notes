@@ -1,3 +1,5 @@
+include(../commonconfig.pri)
+
 QT       += core gui
 QT += network
 

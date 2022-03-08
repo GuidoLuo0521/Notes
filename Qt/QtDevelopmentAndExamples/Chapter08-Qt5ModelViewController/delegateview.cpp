@@ -8,6 +8,7 @@
 #include <QTextStream>
 
 #include <datedelegate.h>
+#include <QDebug>
 
 
 
@@ -27,6 +28,7 @@ DelegateView::DelegateView(QWidget *parent) :
 
     DateDelegate *pDteDelegate = new DateDelegate(this);
     pTableView->setItemDelegateForColumn(1, pDteDelegate);
+
     ComboxDelegate * pComboxDelegate = new ComboxDelegate(this);
     pTableView->setItemDelegateForColumn(2, pComboxDelegate);
 
@@ -45,11 +47,7 @@ DelegateView::DelegateView(QWidget *parent) :
 
     this->menuBar()->addMenu(pFileMenu);
 
-    QItemSelectionModel * pSelectionModel =
-            new QItemSelectionModel(m_pStandardItemModel);
-    pTableView->setSelectionModel(pSelectionModel);
-
-    connect(pSelectionModel,
+    connect(pTableView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
             pTableView,
             SLOT(selectionChanged(QItemSelection, QItemSelection)));
@@ -98,8 +96,21 @@ void DelegateView::Open()
 void DelegateView::Save()
 {
     //QString strOpenPath = QFileDialog::getSaveFileName(this, "保存文件");
-    if(m_strFilePath == "")
-        return;
+    if(m_strFilePath.isEmpty())
+    {
+        qDebug() << tr("文件为空。");
+
+        QString strOpenPath = QFileDialog::getSaveFileName(this, "保存文件");
+        if( strOpenPath.isEmpty() )
+        {
+            qDebug() << tr("未保存文件名。");
+            return;
+        }
+        else
+        {
+            m_strFilePath = strOpenPath;
+        }
+    }
 
     QFile file(m_strFilePath);
     if( file.open( QIODevice::WriteOnly ) )
@@ -120,6 +131,8 @@ void DelegateView::Save()
 
         file.write(textData.toLocal8Bit().data());
         file.close();
+
+         qDebug() << tr("已写到文件：") << m_strFilePath;
     }
 }
 
