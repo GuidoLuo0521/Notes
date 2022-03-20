@@ -1794,3 +1794,100 @@ processWidget(pw, priority());
 ### 总结
 
 就是题目：以独立的语句将对象存入智能指针中。如果不这样，就可能出现异常。
+
+
+
+## 条款20 宁以pass-by-reference-to-const 替换 pass-by-value
+
+### 1、一来，提升效率，因为不用调用构造和析构。
+
+~~~c++
+#define CONSTRUCTOR_DESTRUCTOR_DECL_IMPL(retType) \
+public:\
+    retType(){ COUT_FUNC_NAME; }    \
+    ~retType(){ COUT_FUNC_NAME; }
+
+
+class Person
+{
+public:
+    CONSTRUCTOR_DESTRUCTOR_DECL_IMPL(Person);
+
+    string name;
+};
+
+class Student : public Person
+{
+public:
+    CONSTRUCTOR_DESTRUCTOR_DECL_IMPL(Student)
+};
+
+class PrimarySchoolStudent : public Student
+{
+public:
+    CONSTRUCTOR_DESTRUCTOR_DECL_IMPL(PrimarySchoolStudent)
+
+};
+
+void func(PrimarySchoolStudent student)
+{
+    std::cout << student.name << '\n';
+};
+~~~
+
+如果是上述接口（传入后，没有改变 student ），那么就会执行 8 次构造和析构。严重降低效率。
+
+> 8次：string 2次，Person 2次，Student 次，PrimarySchoolStudent 2次，按先后顺序构造，析构反向
+
+### 2、防止对象切割
+
+什么叫对象切割，就是被构造成父类的部分，看下面代码
+
+~~~c++
+class Window
+{
+public:
+    Window() : m_name("window") {  cout << __FUNCTION__ << "\n";  }
+    virtual ~Window() { }
+
+    string name() const  { return m_name;  }
+    virtual void display() const { cout << "Window::" << __FUNCTION__ << "\n"; }
+
+    string m_name;
+};
+
+class WindowWithScrollbars : public Window
+{
+public:
+    WindowWithScrollbars() { cout << __FUNCTION__ << "\n"; }
+    virtual ~WindowWithScrollbars() {}
+
+    virtual void display() const override { cout << "WindowWithScrollbars::" << __FUNCTION__ << "\n"; }
+
+    int m_val;
+};
+
+// pass-by-value
+void printNameAndDisplay( Window w )
+{
+    cout << w.name() << "\n";
+    w.display();
+}
+
+// pass-by-reference
+void printNameAndDisplayRef(const Window& w )
+{
+    cout << w.name() << "\n";
+    w.display();
+}
+~~~
+
+如果是上述的接口，那么参数 w 会被生成一个 Window 对象，因为是 pass-by-value。所以，调用的是 Window 的 display()。
+
+### 总结
+
+* 非内置类型的时候，pass-by-reference-const 比 pass-by-value 好
+* 内置类型和STL迭代器和函数对象的时候，pass-by-value 更好
+* `pass-by-reference-const` 大部分情况下有利于提升效率
+* `pass-by-reference-const`  可避免对象被切割
+

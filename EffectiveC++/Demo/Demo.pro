@@ -4,4 +4,5 @@ SUBDIRS += \
     Terms06_ExplicityDisallowFunc \
     Terms07_VirtualDestructor \
     Terms14_CarefullyCopying \
-    Terms15_ProvideRawRes
+    Terms15_ProvideRawRes \
+    Terms20_PassByReferenceToConst
